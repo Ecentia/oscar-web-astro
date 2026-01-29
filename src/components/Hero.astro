@@ -1,183 +1,319 @@
 ---
 ---
-<section class="hero-section" data-bgcolor="#050505" data-textcolor="#ffffff">
+<section class="hero-section" id="hero">
     
-    <div class="video-bg-container">
-        <video autoplay muted loop playsinline class="bg-video">
+    <!-- BACKGROUND VIDEO -->
+    <div class="video-container">
+        <!-- Asegúrate de que el video esté en la carpeta public -->
+        <video 
+            autoplay 
+            loop 
+            muted 
+            playsinline 
+            class="hero-video"
+            id="main-video"
+        >
             <source src="/public/assets/canada.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
     </div>
 
-    <div class="corner-text top-left reveal-meta">GLOBAL FREQUENCY</div>
-    <div class="corner-text top-right reveal-meta">EST. 199X</div>
-
-    <div class="hero-content">
-        <div class="logo-container">
-            
-            <div class="brand-part move-left">
-                <span class="logo-text oscar-style">OSCAR</span>
+    <!-- UI LAYER -->
+    <div class="hero-ui">
+        
+        <!-- TOP BRANDING -->
+        <div class="brand-top">
+            <h1 class="brand-text outline">OSCAR</h1>
+            <div class="live-indicator">
+                <span class="dot"></span> LIVE
             </div>
+        </div>
+
+        <!-- CENTER ACTION (Clean Area) -->
+        <div class="center-controls">
+            <button class="control-btn" id="toggle-ui" aria-label="Hide UI">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span class="tooltip">VIEW MODE</span>
+            </button>
             
-            <div class="brand-part move-right">
-                <div class="herrera-box">
-                    <span class="logo-text herrera-style">HERRERA</span>
+            <button class="control-btn" id="toggle-sound" aria-label="Unmute">
+                <div class="equalizer">
+                    <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
                 </div>
+                <span class="tooltip">SOUND ON</span>
+            </button>
+        </div>
+
+        <!-- BOTTOM BRANDING -->
+        <div class="brand-bottom">
+            <div class="scroll-indicator">
+                <span>SCROLL</span>
+                <div class="line"></div>
             </div>
-
+            <h1 class="brand-text solid">HERRERA</h1>
         </div>
 
-        <div class="scroll-icon reveal-meta">
-            <div class="mouse"></div>
-            <p>SCROLL</p>
-        </div>
     </div>
+
 </section>
 
 <script>
     import { gsap } from "gsap";
-    import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-    gsap.registerPlugin(ScrollTrigger);
+    const video = document.getElementById('main-video') as HTMLVideoElement;
+    const soundBtn = document.getElementById('toggle-sound');
+    const uiBtn = document.getElementById('toggle-ui');
+    const bars = document.querySelectorAll('.equalizer .bar');
+    const heroUI = document.querySelector('.hero-ui');
+    
+    // 1. Entrance Animation
+    const tl = gsap.timeline({ delay: 0.5 });
+    
+    tl.from('.brand-top', { y: -100, opacity: 0, duration: 1.2, ease: "power4.out" })
+      .from('.brand-bottom', { y: 100, opacity: 0, duration: 1.2, ease: "power4.out" }, "<")
+      .from('.center-controls', { scale: 0, opacity: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=0.5");
 
-    window.addEventListener('loader-complete', () => {
-        const tl = gsap.timeline();
-
-        // 1. Entrada con fuerza
-        tl.from(".brand-part", {
-            scale: 0.85,
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power4.out"
-        });
-
-        // 2. Meta Info
-        tl.from(".reveal-meta", { opacity: 0, y: 20, duration: 1 }, "-=0.8");
-
-        // 3. ANIMACIÓN SCROLL (SEPARACIÓN)
-        gsap.to(".move-left", {
-            xPercent: -150, 
-            scrollTrigger: {
-                trigger: ".hero-section",
-                start: "top top",
-                end: "bottom top",
-                scrub: 1
-            }
-        });
-
-        gsap.to(".move-right", {
-            xPercent: 150,
-            scrollTrigger: {
-                trigger: ".hero-section",
-                start: "top top",
-                end: "bottom top",
-                scrub: 1
-            }
-        });
+    // 2. Sound Toggle Logic
+    let isMuted = true;
+    
+    // Animación del ecualizador (pausada por defecto)
+    const eqAnim = gsap.to(bars, {
+        height: "100%",
+        duration: 0.4,
+        ease: "power1.inOut",
+        stagger: {
+            each: 0.1,
+            yoyo: true,
+            repeat: -1
+        },
+        paused: true
     });
+
+    if(soundBtn && video) {
+        soundBtn.addEventListener('click', () => {
+            if(isMuted) {
+                video.muted = false;
+                eqAnim.play();
+                soundBtn.classList.add('active');
+                gsap.to(soundBtn.querySelector('.tooltip'), { text: "MUTED" }); // Cambiar texto opcional
+            } else {
+                video.muted = true;
+                eqAnim.pause();
+                gsap.to(bars, { height: "20%" }); // Reset altura
+                soundBtn.classList.remove('active');
+            }
+            isMuted = !isMuted;
+        });
+    }
+
+    // 3. View Mode (Hide UI)
+    let isHidden = false;
+    
+    if(uiBtn && heroUI) {
+        uiBtn.addEventListener('click', () => {
+            if(!isHidden) {
+                // Ocultar todo menos el botón de volver
+                gsap.to(['.brand-top', '.brand-bottom', '#toggle-sound'], { opacity: 0, pointerEvents: 'none', duration: 0.5 });
+                uiBtn.classList.add('active'); // Cambiar icono visualmente si se desea
+            } else {
+                // Mostrar todo
+                gsap.to(['.brand-top', '.brand-bottom', '#toggle-sound'], { opacity: 1, pointerEvents: 'all', duration: 0.5 });
+                uiBtn.classList.remove('active');
+            }
+            isHidden = !isHidden;
+        });
+    }
+
 </script>
 
 <style>
     .hero-section {
-        height: 100vh; width: 100%; position: relative;
-        display: flex; align-items: center; justify-content: center;
+        position: relative;
+        height: 100vh;
+        width: 100%;
         overflow: hidden;
+        background: #000;
+        color: #fff;
     }
 
-    /* --- FONDO --- */
-    .video-bg-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-    .bg-video { width: 100%; height: 100%; object-fit: cover; }
-    
+    /* --- VIDEO LAYER --- */
+    .video-container {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 0;
+    }
+
+    .hero-video {
+        width: 100%; height: 100%;
+        object-fit: cover;
+    }
+
     .video-overlay {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        /* CAMBIO CLAVE: Aumentada opacidad al 65% para que el blanco resalte mucho más */
-        background: rgba(0,0,0,0.65); 
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        /* Vignette sutil para que el texto blanco se lea en los bordes */
+        background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
+        pointer-events: none;
     }
 
-    /* --- CONTENEDOR LOGO --- */
-    .hero-content {
-        z-index: 5; width: 100%; height: 100%;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
+    /* --- UI LAYER --- */
+    .hero-ui {
+        position: relative;
+        z-index: 10;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 2vw;
     }
 
-    .logo-container {
+    /* TYPOGRAPHY */
+    .brand-text {
+        font-family: var(--font-display, sans-serif);
+        font-size: 14vw;
+        line-height: 0.75;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: -0.04em;
+        mix-blend-mode: exclusion; /* CLAVE: Invierte colores sobre el video */
+    }
+
+    .outline {
+        color: transparent;
+        -webkit-text-stroke: 2px #fff;
+    }
+
+    .solid {
+        color: #fff;
+    }
+
+    /* TOP BAR */
+    .brand-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .live-indicator {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.1);
+        padding: 5px 12px;
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+    }
+
+    .dot {
+        width: 8px; height: 8px;
+        background-color: #ff0000;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #ff0000;
+        animation: pulse 1.5s infinite;
+    }
+
+    /* BOTTOM BAR */
+    .brand-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .scroll-indicator {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        transform: skewX(-10deg); /* Inclinación del logo oficial */
-        gap: 5px;
-        margin-bottom: 40px;
+        gap: 10px;
+        font-family: var(--font-mono, monospace);
+        font-size: 0.7rem;
+        margin-bottom: 2vw;
     }
 
-    .brand-part {
+    .line {
+        width: 1px; height: 40px;
+        background: #fff;
+        opacity: 0.5;
+    }
+
+    /* CENTER CONTROLS */
+    .center-controls {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        gap: 20px;
+    }
+
+    .control-btn {
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: #fff;
+        width: 60px; height: 60px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        position: relative;
     }
 
-    /* --- TIPOGRAFÍA BASE --- */
-    .logo-text {
-        font-family: var(--font-display); /* Anton */
-        font-size: 15vw; /* Un pelín más grande */
-        line-height: 0.85;
-        text-transform: uppercase;
-        letter-spacing: -2px;
+    .control-btn:hover {
+        background: #fff;
+        color: #000;
+        transform: scale(1.1);
+    }
+    
+    .control-btn:hover .bar { background: #000; }
+
+    .tooltip {
+        position: absolute;
+        bottom: -30px;
+        font-family: var(--font-mono, monospace);
+        font-size: 0.6rem;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: 0.3s;
+        white-space: nowrap;
     }
 
-    /* --- ESTILO 1: OSCAR (TEXTO BLANCO) --- */
-    .oscar-style {
-        color: #ffffff;
-        /* CAMBIO: Sombra más potente y oscura para despegarlo del fondo */
-        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
-    }
+    .control-btn:hover .tooltip { opacity: 1; transform: translateY(0); }
 
-    /* --- ESTILO 2: HERRERA (CAJA BLANCA) --- */
-    .herrera-box {
-        background-color: #ffffff;
-        padding: 0 15px;
+    /* EQUALIZER */
+    .equalizer {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        transform: translateX(10px); 
-        /* CAMBIO: Añadida sombra a la caja para darle volumen */
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        gap: 3px;
+        height: 20px;
+        align-items: flex-end;
     }
 
-    .herrera-style {
-        color: #000000;
+    .bar {
+        width: 3px;
+        height: 20%; /* Altura inicial */
+        background: #fff;
+        border-radius: 2px;
     }
 
-    /* --- UI ELEMENTS --- */
-    .corner-text {
-        position: absolute; top: 40px; font-family: var(--font-mono); font-size: 0.9rem;
-        letter-spacing: 2px; color: rgba(255,255,255,0.9); z-index: 10; text-transform: uppercase; font-weight: 600;
-        text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
     }
-    .top-left { left: 40px; } .top-right { right: 40px; }
 
-    .scroll-icon {
-        position: absolute; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 10px;
-    }
-    .scroll-icon p {
-        font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-    }
-    .mouse {
-        width: 20px; height: 35px; border: 2px solid #fff; border-radius: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.8);
-    }
-    .mouse::before {
-        content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
-        width: 4px; height: 4px; background: #fff; border-radius: 50%; animation: scrollWheel 2s infinite;
-    }
-    @keyframes scrollWheel { 0% { top: 5px; opacity: 1; } 100% { top: 20px; opacity: 0; } }
-
-    /* MÓVIL */
     @media (max-width: 768px) {
-        .logo-text { font-size: 19vw; }
-        .logo-container { transform: skewX(-8deg); gap: 2px; }
-        .corner-text { top: 20px; font-size: 0.7rem; }
-        .top-left { left: 20px; } .top-right { right: 20px; }
+        .brand-text { font-size: 18vw; }
+        .hero-ui { padding: 15px; }
+        .center-controls { top: 60%; } /* Bajar controles en móvil */
+        
+        /* En móvil, apilamos: OSCAR arriba, HERRERA abajo */
+        .brand-top { flex-direction: column-reverse; align-items: flex-start; gap: 10px; }
+        .live-indicator { align-self: flex-end; }
     }
 </style>

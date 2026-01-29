@@ -1,9 +1,16 @@
 ---
 ---
 <section class="kinetic-section">
+    
+    <!-- FONDO VISUAL CON COLOR -->
+    <div class="background-container">
+        <img src="/assets/foto_dj.jpg" alt="Rave Atmosphere" class="bg-image" />
+        <div class="color-overlay"></div>
+    </div>
+
     <div class="kinetic-wrapper">
         
-        <!-- CINTA 1: Izquierda a Derecha -->
+        <!-- CINTA 1 -->
         <div class="tape-row" id="row-1">
             <div class="tape-track">
                 <span class="word solid">HARD TECHNO</span>
@@ -17,7 +24,7 @@
             </div>
         </div>
 
-        <!-- CINTA 2: Derecha a Izquierda -->
+        <!-- CINTA 2 -->
         <div class="tape-row" id="row-2">
             <div class="tape-track">
                 <span class="word outline">HYPNOTIC</span>
@@ -42,6 +49,7 @@
 
     const row1 = document.querySelector('#row-1 .tape-track');
     const row2 = document.querySelector('#row-2 .tape-track');
+    const bgImage = document.querySelector('.bg-image');
 
     // Velocidad base
     let xPercent1 = 0;
@@ -49,57 +57,56 @@
     let direction = 1;
     let velocity = 0;
 
-    // Animación constante (loop infinito)
+    // Loop de movimiento infinito
     gsap.to({}, {
-        duration: 0.1, // Update muy rápido
+        duration: 0.1,
         repeat: -1,
         onRepeat: () => {
-            // Movimiento base constante
             const baseSpeed = 0.05; 
-            
-            // Sumamos la velocidad del scroll a la base
-            const currentSpeed = baseSpeed + (velocity * 0.05);
+            const currentSpeed = baseSpeed + (velocity * 0.08); // Un poco más reactivo
 
-            // Actualizamos posiciones
-            xPercent1 += currentSpeed * direction * -1; // Izquierda
-            xPercent2 += currentSpeed * direction;      // Derecha
+            xPercent1 += currentSpeed * direction * -1;
+            xPercent2 += currentSpeed * direction;
 
-            // Reset lógico para loop infinito
             if (xPercent1 <= -50) xPercent1 = 0;
             if (xPercent1 > 0) xPercent1 = -50;
             
             if (xPercent2 <= -50) xPercent2 = 0;
             if (xPercent2 > 0) xPercent2 = -50;
 
-            // Aplicamos transformaciones
             gsap.set(row1, { xPercent: xPercent1 });
             gsap.set(row2, { xPercent: xPercent2 });
         }
     });
 
-    // ScrollTrigger para detectar velocidad y hacer Skew
     ScrollTrigger.create({
         trigger: ".kinetic-section",
         start: "top bottom",
         end: "bottom top",
         onUpdate: (self) => {
-            // Obtenemos la velocidad del scroll
-            velocity = self.getVelocity() / 300; // Normalizamos valor
+            velocity = self.getVelocity() / 300;
             
-            // Limitamos la velocidad máxima para que no se rompa visualmente
             if(velocity > 5) velocity = 5;
             if(velocity < -5) velocity = -5;
 
-            // Aplicamos SKEW (deformación) basado en la velocidad
-            // Esto da el efecto de "gelatina" o inercia potente
+            // Skew Effect
             gsap.to(".tape-track", {
-                skewX: velocity * -5, // Invertimos para que se deforme contra el movimiento
+                skewX: velocity * -3,
                 duration: 0.5,
                 ease: "power2.out",
                 overwrite: "auto"
             });
             
-            // Restauramos el skew a 0 cuando deja de scrollear
+            // Efecto Parallax en la imagen de fondo (Zoom + Movimiento)
+            if(bgImage) {
+                gsap.to(bgImage, {
+                    scale: 1.1 + (Math.abs(velocity) * 0.02), // Zoom sutil con velocidad
+                    y: velocity * 2,
+                    duration: 0.5,
+                    overwrite: "auto"
+                });
+            }
+            
             gsap.to(".tape-track", {
                 skewX: 0,
                 duration: 0.5,
@@ -113,24 +120,50 @@
 
 <style>
     .kinetic-section {
+        position: relative;
         background-color: #050505;
         color: #fff;
-        padding: 10vh 0;
+        height: 80vh; /* Altura fija para ser una ventana visual */
+        min-height: 600px;
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
-        /* Un borde sutil para separar secciones */
-        border-top: 1px solid rgba(255,255,255,0.1);
-        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
+    /* --- FONDO E IMAGEN --- */
+    .background-container {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .bg-image {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        opacity: 0.8;
+        transform: scale(1.1); /* Espacio para parallax */
+    }
+
+    .color-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        /* Gradiente "Club": Violeta oscuro a Azul noche */
+        background: linear-gradient(45deg, rgba(20, 0, 50, 0.8), rgba(0, 20, 60, 0.6));
+        mix-blend-mode: multiply;
+    }
+
+    /* --- CONTENIDO --- */
     .kinetic-wrapper {
+        position: relative;
+        z-index: 10;
         display: flex;
         flex-direction: column;
-        gap: 2vw; /* Espacio entre las dos líneas */
+        gap: 0; /* Sin espacio para efecto bloque */
         width: 100%;
-        transform: rotate(-2deg); /* Ligera inclinación general para dinamismo */
+        transform: rotate(-3deg);
+        mix-blend-mode: hard-light; /* Fusión interesante con el fondo */
     }
 
     .tape-row {
@@ -138,40 +171,41 @@
         overflow: hidden;
         white-space: nowrap;
         display: flex;
+        padding: 10px 0;
     }
 
     .tape-track {
         display: flex;
-        gap: 4vw; /* Espacio entre palabras */
-        will-change: transform; /* Optimización de rendimiento */
+        gap: 2vw;
+        will-change: transform;
     }
 
     .word {
         font-family: var(--font-display, sans-serif);
-        font-size: 15vw; /* Texto GIGANTE */
-        line-height: 0.85;
+        font-size: 14vw;
+        line-height: 0.8;
         text-transform: uppercase;
         letter-spacing: -0.04em;
+        font-weight: 900;
     }
 
     .solid {
         color: #fff;
+        text-shadow: 0 0 20px rgba(255,255,255,0.3); /* Glow sutil */
     }
 
     .outline {
         color: transparent;
-        -webkit-text-stroke: 2px #fff; /* Solo borde */
-        opacity: 0.5; /* Un poco más sutil para dar profundidad */
+        /* COLOR DE ACENTO: Verde Ácido */
+        -webkit-text-stroke: 2px #ccff00; 
+        opacity: 0.9;
     }
 
     @media (max-width: 768px) {
         .word {
-            font-size: 20vw; /* Aún más grande en móvil para impacto */
-            -webkit-text-stroke: 1px #fff;
+            font-size: 18vw;
+            -webkit-text-stroke: 1px #ccff00;
         }
-        .kinetic-wrapper {
-            gap: 5vw;
-            transform: rotate(-5deg); /* Más inclinado en móvil */
-        }
+        .kinetic-section { height: 60vh; }
     }
 </style>

@@ -1,49 +1,48 @@
 ---
+const tourDates = [
+    { date: "24 OCT", city: "MADRID", venue: "FABRIK", status: "SOLD OUT" },
+    { date: "31 OCT", city: "IBIZA", venue: "DC-10", status: "TICKETS" },
+    { date: "12 NOV", city: "LONDON", venue: "PRINTWORKS", status: "TICKETS" },
+    { date: "05 DEC", city: "BERLIN", venue: "BERGHAIN", status: "TICKETS" },
+    { date: "18 DEC", city: "TOKYO", venue: "WOMB", status: "WAITLIST" },
+    { date: "31 DEC", city: "NEW YORK", venue: "BASEMENT", status: "TICKETS" },
+];
 ---
-<section class="tour-section" data-bgcolor="#FF3333" data-textcolor="#000000">
+
+<section class="tour-section" id="tour">
     
-    <div class="bg-typography">
-        <div class="giant-text text-world">WORLD</div>
-        <div class="giant-text text-mid">FREQUENCY</div>
-        <div class="giant-text text-wide">WIDE</div>
-        <div class="vertical-text">GLOBAL ENERGY 100%</div>
-    </div>
-
-    <div class="sticky-wrapper">
-        <h2 class="section-title">TOUR<br>2026</h2>
-        
-        <div class="cards-container">
-            
-            <div class="tour-card card-left">
-                <video autoplay muted loop playsinline>
-                    <source src="/assets/video_mexico.mp4" type="video/mp4">
-                </video>
-                <div class="card-info">
-                    <h3>CDMX</h3>
-                    <p>EDC MEXICO</p>
-                </div>
-            </div>
-
-            <div class="tour-card card-right">
-                <video autoplay muted loop playsinline>
-                    <source src="/assets/canada.mp4" type="video/mp4">
-                </video>
-                <div class="card-info">
-                    <h3>VANCOUVER</h3>
-                    <p>SOLD OUT</p>
-                </div>
-            </div>
-
-            <div class="tour-card card-center">
-                <img src="/assets/foto_dj.jpg" alt="Live Set">
-                <div class="card-info">
-                    <h3>LIVE</h3>
-                    <p>THE ENERGY</p>
-                </div>
-            </div>
-
+    <div class="tour-header">
+        <h2 class="section-title">GLOBAL<br>RITUALS</h2>
+        <div class="header-meta">
+            <span>2025 / 2026 SEASON</span>
+            <span>WORLDWIDE</span>
         </div>
     </div>
+
+    <div class="tour-list">
+        <!-- Header de la tabla (oculto en móvil) -->
+        <div class="tour-row header-row">
+            <span class="col date">DATE</span>
+            <span class="col city">CITY</span>
+            <span class="col venue">VENUE</span>
+            <span class="col action">STATUS</span>
+        </div>
+
+        {tourDates.map((gig) => (
+            <div class="tour-row item-row">
+                <div class="col date">{gig.date}</div>
+                <div class="col city">{gig.city}</div>
+                <div class="col venue">{gig.venue}</div>
+                <div class="col action">
+                    <a href="#" class={`ticket-btn ${gig.status === 'SOLD OUT' ? 'sold-out' : ''}`}>
+                        {gig.status}
+                    </a>
+                </div>
+                <div class="row-bg"></div>
+            </div>
+        ))}
+    </div>
+
 </section>
 
 <script>
@@ -52,104 +51,161 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    window.addEventListener('loader-complete', () => {
-        // 1. Animación Tarjetas
-        const cards = document.querySelectorAll('.tour-card');
-        cards.forEach((card) => {
-            gsap.fromTo(card, 
-                { opacity: 0, y: 100, scale: 0.95 }, 
-                {
-                    opacity: 1, y: 0, scale: 1,
-                    duration: 1, ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 90%",
-                        end: "top 60%",
-                        scrub: 1
-                    }
-                }
-            );
-        });
+    const rows = document.querySelectorAll('.item-row');
 
-        // 2. Efectos de Fondo
-        gsap.to(".text-world", {
-            xPercent: 30,
-            scrollTrigger: { trigger: ".tour-section", start: "top bottom", end: "bottom top", scrub: 1 }
+    // 1. Animación de entrada (Reveal)
+    gsap.from(rows, {
+        scrollTrigger: {
+            trigger: ".tour-list",
+            start: "top 80%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power3.out"
+    });
+
+    // 2. Hover Effect (Inversión de color limpia)
+    rows.forEach(row => {
+        const btn = row.querySelector('.ticket-btn');
+        
+        row.addEventListener('mouseenter', () => {
+            gsap.to(row, { color: "#000", backgroundColor: "#fff", duration: 0.3 });
+            if(btn) gsap.to(btn, { borderColor: "#000", color: "#000", duration: 0.3 });
         });
-        gsap.to(".text-mid", {
-            xPercent: -15,
-            scrollTrigger: { trigger: ".tour-section", start: "top bottom", end: "bottom top", scrub: 1.5 }
-        });
-        gsap.to(".text-wide", {
-            xPercent: 20,
-            scrollTrigger: { trigger: ".tour-section", start: "top bottom", end: "bottom top", scrub: 1 }
-        });
-        gsap.to(".vertical-text", {
-            yPercent: -50,
-            scrollTrigger: { trigger: ".tour-section", start: "top bottom", end: "bottom top", scrub: 1 }
+        
+        row.addEventListener('mouseleave', () => {
+            gsap.to(row, { color: "#fff", backgroundColor: "transparent", duration: 0.3 });
+            if(btn) gsap.to(btn, { borderColor: "#fff", color: "#fff", duration: 0.3 });
         });
     });
 </script>
 
 <style>
     .tour-section {
-        min-height: 250vh; 
-        padding: 0 5vw 100px 5vw;
-        position: relative;
-        overflow: hidden;
+        background-color: #050505;
+        color: #fff;
+        padding: 100px 4vw;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
-    /* --- FONDO --- */
-    .bg-typography {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
-    }
-    .giant-text {
-        font-family: var(--font-display); font-size: 35vw; position: absolute; line-height: 0.75;
-        color: #000000; opacity: 0.25; white-space: nowrap; transform-origin: center;
-    }
-    .text-world { top: 2%; left: -15%; transform: rotate(-5deg); }
-    .text-mid { top: 35%; left: -10%; font-size: 28vw; opacity: 0.15; transform: rotate(5deg); }
-    .text-wide { bottom: 5%; right: -10%; text-align: right; transform: rotate(-5deg); }
-    .vertical-text {
-        position: absolute; top: 10%; right: 2vw; font-family: var(--font-mono); font-size: 3vh;
-        writing-mode: vertical-rl; text-orientation: mixed; letter-spacing: 10px; color: #000; opacity: 0.4; font-weight: bold;
+    /* --- HEADER --- */
+    .tour-header {
+        margin-bottom: 80px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding-bottom: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 20px;
     }
 
-    /* --- UI --- */
     .section-title {
-        font-family: var(--font-display); font-size: 10vw; position: absolute; top: 0; right: 5vw; z-index: 10;
-        pointer-events: none; mix-blend-mode: difference; line-height: 0.8; text-align: right;
-    }
-    .cards-container {
-        display: flex; flex-direction: column; margin-top: 50px; width: 100%; position: relative; z-index: 5;
-    }
-    .tour-card {
-        position: relative; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); transition: transform 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-    }
-    .tour-card video, .tour-card img {
-        width: 100%; height: 100%; object-fit: cover; transition: filter 0.5s, transform 0.7s; filter: grayscale(100%);
-    }
-    .tour-card:hover video, .tour-card:hover img {
-        filter: grayscale(0%); transform: scale(1.05);
+        font-family: var(--font-display, sans-serif);
+        font-size: 8vw;
+        line-height: 0.85;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
     }
 
-    /* --- ENCUADRES Y POSICIONES --- */
-    .card-left { width: 45vw; height: 85vh; align-self: flex-start; z-index: 1; }
-    .card-right { width: 40vw; height: 80vh; align-self: flex-end; margin-top: -50vh; z-index: 2; }
-    
-    .card-center { 
-        width: 90vw; height: 70vh; align-self: center; margin-top: 10vh; z-index: 3; 
-    }
-    
-    .card-center img { 
-        /* CAMBIO: center 25% -> Enfoca el cuarto superior (cabeza/pecho) sin pegarse al techo */
-        object-position: center 33%; 
+    .header-meta {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.9rem;
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        opacity: 0.7;
     }
 
-    .card-info {
-        position: absolute; bottom: 0; left: 0; background: #fff; color: #000; padding: 15px 30px; font-family: var(--font-mono);
+    /* --- LIST --- */
+    .tour-list {
+        display: flex;
+        flex-direction: column;
     }
-    .card-info h3 {
-        font-size: 2rem; font-weight: 700; margin-bottom: 5px; font-family: var(--font-display);
+
+    .tour-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr 2fr 1fr; /* Grid layout */
+        align-items: center;
+        padding: 30px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        position: relative;
+        transition: padding 0.3s ease; /* Smooth hover padding */
+    }
+
+    .header-row {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.8rem;
+        opacity: 0.5;
+        letter-spacing: 0.1em;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #fff; /* Línea más gruesa para el header */
+    }
+
+    .item-row {
+        font-family: var(--font-display, sans-serif);
+        font-size: 2.5rem; /* Texto grande */
+        text-transform: uppercase;
+        cursor: pointer;
+        padding-left: 10px; /* Espacio para hover */
+        padding-right: 10px;
+    }
+    
+    .item-row:last-child {
+        border-bottom: none;
+    }
+
+    /* --- COLUMNS --- */
+    .col.date { font-family: var(--font-mono, monospace); font-size: 1rem; letter-spacing: 0.1em; }
+    .col.action { display: flex; justify-content: flex-end; }
+
+    /* --- BUTTON --- */
+    .ticket-btn {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.8rem;
+        padding: 10px 25px;
+        border: 1px solid #fff;
+        border-radius: 50px;
+        text-decoration: none;
+        color: #fff;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+
+    .ticket-btn.sold-out {
+        opacity: 0.5;
+        text-decoration: line-through;
+        pointer-events: none;
+        border-color: #555;
+        color: #555;
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 900px) {
+        .tour-row {
+            grid-template-columns: 1fr auto;
+            grid-template-areas: 
+                "city action"
+                "venue venue"
+                "date date";
+            gap: 5px;
+            padding: 25px 0;
+        }
+
+        .header-row { display: none; } /* Ocultamos header en móvil */
+
+        .col.city { grid-area: city; font-size: 2rem; }
+        .col.venue { grid-area: venue; font-size: 1.2rem; opacity: 0.7; font-family: var(--font-mono); }
+        .col.date { grid-area: date; font-size: 0.9rem; opacity: 0.5; margin-top: 10px; }
+        .col.action { grid-area: action; }
+        
+        .section-title { font-size: 14vw; }
     }
 </style>

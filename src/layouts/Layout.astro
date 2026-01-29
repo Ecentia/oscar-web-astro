@@ -1,0 +1,81 @@
+---
+// src/layouts/Layout.astro
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{title}</title>
+		
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<div class="cursor"></div>
+		<div id="canvas-container"></div>
+		
+		<slot /> </body>
+</html>
+
+<style is:global>
+	/* Estilos Globales extraídos de tu HTML */
+	:root {
+		--primary: #ffffff;
+		--secondary: #888888;
+		--accent: #00ff88;
+		--bg: #050505;
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	body {
+		background-color: var(--bg);
+		color: var(--primary);
+		font-family: 'Inter', sans-serif;
+		overflow-x: hidden;
+		cursor: none; /* Tu cursor personalizado */
+	}
+
+	h1, h2, h3 {
+		font-family: 'Syne', sans-serif;
+		text-transform: uppercase;
+		line-height: 0.9;
+	}
+
+	/* Custom Cursor */
+	.cursor {
+		position: fixed;
+		width: 20px;
+		height: 20px;
+		border: 1px solid var(--primary);
+		border-radius: 50%;
+		pointer-events: none;
+		z-index: 9999;
+		mix-blend-mode: difference;
+		transition: transform 0.2s;
+	}
+
+	/* Three.js Canvas de Fondo */
+	#canvas-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		z-index: -1;
+		opacity: 0.4;
+	}
+</style>

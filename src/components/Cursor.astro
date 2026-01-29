@@ -1,50 +1,107 @@
 ---
 ---
-<div class="cursor"></div>
-<div class="cursor-follower"></div>
-<div class="noise"></div>
+<div class="custom-cursor">
+    <div class="cursor-dot"></div>
+    <div class="cursor-label">SCROLL</div>
+</div>
 
 <script>
     import { gsap } from "gsap";
 
-    const cursor = document.querySelector('.cursor');
-    const follower = document.querySelector('.cursor-follower');
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorLabel = document.querySelector('.cursor-label');
 
-    if (cursor && follower) {
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, {x: e.clientX, y: e.clientY, duration: 0.1});
-            gsap.to(follower, {x: e.clientX, y: e.clientY, duration: 0.3});
+    let mouseX = 0;
+    let mouseY = 0;
+    let labelX = 0;
+    let labelY = 0;
+
+    // Movimiento del ratón
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // El punto sigue al ratón instantáneamente
+        gsap.to(cursorDot, {
+            x: mouseX,
+            y: mouseY,
+            duration: 0,
+            overwrite: true
         });
-    }
+    });
+
+    // Loop de animación para el texto (efecto delay suave)
+    gsap.ticker.add(() => {
+        // Interpolación para el texto
+        labelX += (mouseX - labelX) * 0.15; // Factor de suavizado
+        labelY += (mouseY - labelY) * 0.15;
+
+        gsap.set(cursorLabel, {
+            x: labelX,
+            y: labelY
+        });
+    });
+
+    // Interacciones (Hover)
+    const interactiveElements = document.querySelectorAll('a, button, .hover-target');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            // El punto crece
+            gsap.to(cursorDot, { scale: 3, opacity: 0.5, duration: 0.3 });
+            // El texto se oculta o cambia si quisieras
+            // gsap.to(cursorLabel, { opacity: 0, duration: 0.3 });
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            // Vuelta al estado normal
+            gsap.to(cursorDot, { scale: 1, opacity: 1, duration: 0.3 });
+            // gsap.to(cursorLabel, { opacity: 1, duration: 0.3 });
+        });
+    });
+
 </script>
 
 <style>
-    .noise {
+    .custom-cursor {
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none;
-        z-index: 9000;
-        opacity: 0.05;
-        background: url('https://grainy-gradients.vercel.app/noise.svg');
-    }
-
-    .cursor {
-        width: 10px; height: 10px;
-        background: #fff;
-        border-radius: 50%;
-        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
         z-index: 9999;
-        mix-blend-mode: difference;
+        mix-blend-mode: difference; /* Invierte colores para visibilidad */
     }
-    .cursor-follower {
-        width: 40px; height: 40px;
-        border: 1px solid #fff;
+
+    .cursor-dot {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background-color: #fff;
         border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        z-index: 9998;
-        transition: transform 0.1s;
-        mix-blend-mode: difference;
+        transform: translate(-50%, -50%);
+        top: 0;
+        left: 0;
+    }
+
+    .cursor-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translate(15px, 15px); /* Offset para que no tape el punto */
+        font-family: var(--font-mono, monospace);
+        font-size: 10px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: #fff;
+        white-space: nowrap;
+    }
+
+    /* Ocultar en dispositivos táctiles */
+    @media (hover: none) and (pointer: coarse) {
+        .custom-cursor {
+            display: none;
+        }
     }
 </style>

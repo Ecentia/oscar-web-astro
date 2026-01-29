@@ -4,36 +4,36 @@
     
     <div class="sticky-wrapper">
         
-        <!-- PANEL 1: THE DARK VOID -->
+        <!-- PANEL 1: EL VACÍO OSCURO -->
         <div class="panel panel-1">
             <div class="content-box">
-                <span class="label">01 — PHILOSOPHY</span>
+                <span class="label">01 — FILOSOFÍA</span>
                 <h2 class="huge-text">
-                    SILENCE<br>IS THE<br>CANVAS
+                    EL SILENCIO<br>ES EL ÉXITO<br>
                 </h2>
             </div>
         </div>
 
-        <!-- PANEL 2: THE IMAGE (Overlays Panel 1) -->
+        <!-- PANEL 2: LA IMAGEN (Cubre el Panel 1) -->
         <div class="panel panel-2">
             <div class="img-wrapper">
-                <img src="/assets/foto_crowd.jpg" alt="Crowd" class="panel-img" />
+                <img src="/assets/foto_crowd.jpg" alt="Público" class="panel-img" />
                 <div class="img-overlay"></div>
             </div>
             <div class="floating-text">
-                <p>WE DESIGN ATMOSPHERES.</p>
-                <p>WE CONTROL THE ENERGY.</p>
+                <p style="text-transform: uppercase;">Ama a tu familia, trabaja duro, vive tu pasión.</p>
+                <p style="text-transform: uppercase;">Crea un viaje, no solo toques música.</p>
             </div>
         </div>
 
-        <!-- PANEL 3: THE LIGHT (Overlays Panel 2) -->
+        <!-- PANEL 3: LA LUZ (Cubre el Panel 2) -->
         <div class="panel panel-3">
             <div class="content-box light-mode">
-                <span class="label">02 — REALITY</span>
+                <span class="label">02 — REALIDAD</span>
                 <h2 class="huge-text">
-                    PURE<br>IMPACT
+                    PURO<br>IMPACTO
                 </h2>
-                <button class="action-btn">READ MORE</button>
+                <button class="action-btn">LEER MÁS</button>
             </div>
         </div>
 
@@ -195,11 +195,11 @@
 
     .huge-text {
         font-family: var(--font-display, sans-serif);
-        font-size: 12vw;
-        line-height: 0.85;
+        font-size: 10vw; /* Ajustado ligeramente para textos más largos en ES */
+        line-height: 1.1; /* Aumentado para dar aire (antes 0.85) */
         text-transform: uppercase;
         margin: 0;
-        letter-spacing: -0.04em;
+        letter-spacing: 0.02em; /* Separado un poco las letras (antes -0.04em) */
     }
 
     .action-btn {
@@ -217,7 +217,7 @@
     }
 
     @media (max-width: 768px) {
-        .huge-text { font-size: 16vw; }
+        .huge-text { font-size: 14vw; }
         .floating-text { font-size: 0.9rem; padding: 0 20px; }
     }
 </style>

@@ -2,37 +2,37 @@
 ---
 <footer class="footer-section" id="footer">
     
-    <!-- Background Texture (Hidden by default, reveals on hover) -->
-    <div class="footer-bg">
-        <div class="overlay"></div>
-        <img src="/assets/foto_crowd.jpg" alt="Background Texture" class="bg-texture" />
+    <!-- FONDO FOTOGRÁFICO FIJO -->
+    <div class="footer-bg-container">
+        <div class="dark-overlay"></div>
+        <img src="/assets/foto_crowd.jpg" alt="Crowd Atmosphere" class="footer-image" />
     </div>
 
     <div class="footer-content">
         
-        <!-- 1. Infinite Marquee Top -->
+        <!-- 1. Marquee Top -->
         <div class="marquee-wrapper">
             <div class="marquee-track">
-                <span>GLOBAL FREQUENCY</span> <span class="divider">•</span>
-                <span>AVAILABLE FOR BOOKINGS</span> <span class="divider">•</span>
-                <span>WORLDWIDE TOURS</span> <span class="divider">•</span>
-                <span>GLOBAL FREQUENCY</span> <span class="divider">•</span>
-                <span>AVAILABLE FOR BOOKINGS</span> <span class="divider">•</span>
-                <span>WORLDWIDE TOURS</span> <span class="divider">•</span>
+                <span>FRECUENCIA GLOBAL</span> <span class="divider">///</span>
+                <span>DISPONIBLE PARA BOOKING</span> <span class="divider">///</span>
+                <span>GIRAS MUNDIALES</span> <span class="divider">///</span>
+                <span>FRECUENCIA GLOBAL</span> <span class="divider">///</span>
+                <span>DISPONIBLE PARA BOOKING</span> <span class="divider">///</span>
+                <span>GIRAS MUNDIALES</span> <span class="divider">///</span>
             </div>
         </div>
 
-        <!-- 2. Main Grid: Contact & Socials -->
+        <!-- 2. Grid de Contacto -->
         <div class="info-container">
             <div class="info-block contact">
-                <span class="label">SAY HELLO</span>
+                <span class="label">DI HOLA</span>
                 <a href="mailto:booking@oscarherrera.com" class="big-link email">
                     booking@<br>oscarherrera.com
                 </a>
             </div>
 
             <div class="info-block socials">
-                <span class="label">FOLLOW</span>
+                <span class="label">SÍGUEME</span>
                 <div class="social-list">
                     <a href="#" class="social-link">INSTAGRAM <span class="arrow">↗</span></a>
                     <a href="#" class="social-link">SOUNDCLOUD <span class="arrow">↗</span></a>
@@ -49,29 +49,19 @@
             </div>
         </div>
 
-        <!-- 3. Massive Brand Name -->
+        <!-- 3. Nombre Gigante -->
         <div class="brand-wrapper">
             <h1 class="giant-name">
-                <span class="char">O</span>
-                <span class="char">S</span>
-                <span class="char">C</span>
-                <span class="char">A</span>
-                <span class="char">R</span>
+                <span class="char">O</span><span class="char">S</span><span class="char">C</span><span class="char">A</span><span class="char">R</span>
                 <span class="spacer"> </span>
-                <span class="char">H</span>
-                <span class="char">E</span>
-                <span class="char">R</span>
-                <span class="char">R</span>
-                <span class="char">E</span>
-                <span class="char">R</span>
-                <span class="char">A</span>
+                <span class="char">H</span><span class="char">E</span><span class="char">R</span><span class="char">R</span><span class="char">E</span><span class="char">R</span><span class="char">A</span>
             </h1>
         </div>
 
-        <!-- Bottom Copyright -->
+        <!-- Copyright -->
         <div class="legal-row">
             <span>© 2026 OSCAR HERRERA</span>
-            <span>ALL RIGHTS RESERVED</span>
+            <span>TODOS LOS DERECHOS RESERVADOS</span>
         </div>
     </div>
 </footer>
@@ -83,51 +73,50 @@
     gsap.registerPlugin(ScrollTrigger);
 
     const footer = document.querySelector('.footer-section');
-    const bgTexture = document.querySelector('.bg-texture');
-    const chars = document.querySelectorAll('.giant-name .char');
-    const socialLinks = document.querySelectorAll('.social-link');
+    const footerImage = document.querySelector('.footer-image');
     const marqueeTrack = document.querySelector('.marquee-track');
 
-    // 1. Initial Setups
-    gsap.set(chars, { yPercent: 120, rotateX: -90, opacity: 0 });
-    gsap.set(bgTexture, { scale: 1.1, opacity: 0 });
-    
-    // 2. Entrance Animation (ScrollTrigger)
-    ScrollTrigger.create({
-        trigger: footer,
-        start: "top 60%", 
-        onEnter: () => {
-            gsap.to(chars, {
-                yPercent: 0,
-                rotateX: 0,
-                opacity: 1,
-                stagger: 0.05,
-                duration: 1.2,
-                ease: "power4.out"
-            });
-            
-            gsap.from(".info-block", {
-                y: 50,
-                opacity: 0,
-                duration: 1,
-                stagger: 0.2,
-                ease: "power3.out",
-                delay: 0.2
-            });
-        }
-    });
-
-    // 3. Hover Interaction (Background Reveal)
-    if(footer && bgTexture) {
-        footer.addEventListener('mouseenter', () => {
-            gsap.to(bgTexture, { opacity: 0.15, scale: 1, duration: 0.8, ease: "power2.out" });
+    // 1. Animación de Entrada SEGURA (usando .from)
+    // Esto asegura que el contenido sea visible si JS falla o tarda
+    if (footer) {
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: footer,
+                start: "top 75%", // Se activa un poco antes
+            }
         });
-        footer.addEventListener('mouseleave', () => {
-            gsap.to(bgTexture, { opacity: 0, scale: 1.1, duration: 0.8, ease: "power2.out" });
+
+        tl.from(".giant-name .char", {
+            yPercent: 120,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.05,
+            ease: "power4.out"
+        })
+        .from(".info-block", {
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out"
+        }, "-=0.5");
+    }
+
+    // 2. Parallax de Imagen
+    if(footerImage) {
+        gsap.to(footerImage, {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: {
+                trigger: footer,
+                start: "top bottom",
+                end: "bottom bottom",
+                scrub: true
+            }
         });
     }
 
-    // 4. Marquee Animation
+    // 3. Marquee Infinito
     if(marqueeTrack) {
         gsap.to(marqueeTrack, {
             xPercent: -50,
@@ -137,11 +126,10 @@
         });
     }
 
-    // 5. Scroll Top
+    // 4. Botón Subir
     document.getElementById('scrollTopBtn')?.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-
 </script>
 
 <style>
@@ -157,30 +145,31 @@
         padding-top: 80px;
     }
 
-    /* Background Texture */
-    .footer-bg {
+    /* Fondo */
+    .footer-bg-container {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none;
         z-index: 0;
+        overflow: hidden;
     }
-    
-    .bg-texture {
-        width: 100%; height: 100%;
+
+    .footer-image {
+        width: 100%; height: 120%;
         object-fit: cover;
-        filter: grayscale(100%) contrast(1.2);
+        position: absolute; top: -10%; left: 0;
+        filter: grayscale(100%) contrast(1.1) brightness(0.6);
     }
-    
-    .overlay {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(to bottom, #050505 0%, rgba(5,5,5,0.8) 100%);
+
+    .dark-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, #050505 0%, rgba(5,5,5,0.6) 50%, rgba(5,5,5,0.9) 100%);
         z-index: 1;
     }
 
+    /* Contenido */
     .footer-content {
         position: relative;
-        z-index: 2;
+        z-index: 20;
         padding: 0 4vw 2vw 4vw;
         display: flex;
         flex-direction: column;
@@ -191,140 +180,97 @@
 
     /* Marquee */
     .marquee-wrapper {
-        position: absolute;
-        top: 0; left: 0; width: 100%;
+        position: absolute; top: 0; left: 0; width: 100%;
         border-top: 1px solid rgba(255,255,255,0.1);
         border-bottom: 1px solid rgba(255,255,255,0.1);
-        padding: 12px 0;
+        padding: 16px 0;
         overflow: hidden;
-        background: #050505;
+        background: rgba(5, 5, 5, 0.3);
+        backdrop-filter: blur(5px);
+        z-index: 30;
     }
 
     .marquee-track {
-        display: flex;
-        white-space: nowrap;
-        gap: 4vw;
+        display: flex; white-space: nowrap; gap: 8vw;
         font-family: var(--font-mono, monospace);
-        font-size: 0.9rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #666;
+        font-size: 1.1rem; font-weight: 700;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255,255,255,0.3);
     }
     
-    .divider { color: var(--accent, #ff3333); }
+    .divider { color: #ccff00; font-weight: 900; margin: 0 20px; }
 
-    /* Info Grid */
+    /* Info */
     .info-container {
-        display: grid;
-        grid-template-columns: 1.5fr 1fr auto;
-        gap: 40px;
-        margin-top: 120px;
-        align-items: flex-start;
+        display: grid; grid-template-columns: 1.5fr 1fr auto;
+        gap: 40px; margin-top: 120px; align-items: flex-start;
     }
 
     .label {
         font-family: var(--font-mono, monospace);
-        font-size: 0.75rem;
-        color: #555;
-        margin-bottom: 15px;
-        display: block;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-size: 0.75rem; color: #aaa;
+        margin-bottom: 15px; display: block;
+        text-transform: uppercase; letter-spacing: 1px;
     }
 
     .big-link {
         font-family: var(--font-display, sans-serif);
-        font-size: 3.5vw;
-        line-height: 1;
-        color: #fff;
-        text-decoration: none;
+        font-size: 3.5vw; line-height: 1;
+        color: #fff; text-decoration: none;
         transition: color 0.3s;
+        text-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
-    .big-link:hover { color: #888; }
+    .big-link:hover { color: #ccc; }
 
-    .social-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+    .social-list { display: flex; flex-direction: column; gap: 10px; }
 
     .social-link {
         font-family: var(--font-display, sans-serif);
-        font-size: 1.8rem;
-        color: #fff;
-        text-decoration: none;
-        text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        font-size: 1.8rem; color: #fff;
+        text-decoration: none; text-transform: uppercase;
+        display: flex; align-items: center; gap: 10px;
         transition: transform 0.3s;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-    
-    .social-link:hover {
-        transform: translateX(10px);
-        color: #ccc;
-    }
+    .social-link:hover { transform: translateX(10px); color: #ccff00; }
 
-    .arrow { font-size: 1rem; opacity: 0.5; }
+    .arrow { font-size: 1rem; opacity: 0.8; }
 
-    /* Scroll Circle Button */
+    /* Scroll Button */
     .scroll-circle {
         width: 100px; height: 100px;
-        border-radius: 50%;
-        background: #fff;
-        color: #000;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 50%; background: #fff;
+        color: #000; border: none; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: 0.3s; box-shadow: 0 0 20px rgba(255,255,255,0.2);
     }
-    
-    .scroll-circle:hover { transform: scale(1.15); }
+    .scroll-circle:hover { transform: scale(1.15); background: #ccff00; }
     .scroll-circle svg { width: 30px; height: 30px; }
 
-    /* Brand Name */
+    /* Nombre Gigante */
     .brand-wrapper {
-        margin-top: auto;
-        padding-top: 60px;
-        overflow: hidden;
+        margin-top: auto; padding-top: 60px; overflow: hidden;
     }
 
     .giant-name {
         font-family: var(--font-display, sans-serif);
-        font-size: 16vw; /* Massive Size */
-        line-height: 0.75;
-        text-transform: uppercase;
-        color: #fff;
-        display: flex;
-        justify-content: space-between;
-        margin: 0;
-        width: 100%;
-        user-select: none;
+        font-size: 16vw; line-height: 0.75;
+        text-transform: uppercase; color: #fff;
+        display: flex; justify-content: space-between;
+        margin: 0; width: 100%; user-select: none;
+        text-shadow: 0 0 30px rgba(0,0,0,0.8);
     }
 
-    .char {
-        display: inline-block;
-        transform-origin: bottom;
-        transition: color 0.3s;
-    }
-
-    .giant-name:hover .char {
-        color: transparent;
-        -webkit-text-stroke: 1px #fff;
-    }
+    .char { display: inline-block; }
 
     /* Legal */
     .legal-row {
-        display: flex;
-        justify-content: space-between;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        padding-top: 20px;
-        margin-top: 20px;
+        display: flex; justify-content: space-between;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 20px; margin-top: 20px;
         font-family: var(--font-mono, monospace);
-        font-size: 0.75rem;
-        color: #444;
+        font-size: 0.75rem; color: #ccc;
     }
 
     @media (max-width: 900px) {

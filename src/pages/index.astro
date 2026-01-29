@@ -8,6 +8,8 @@ import Hero from '../components/Hero.astro';
 import Manifesto from '../components/Manifesto.astro';
 import Tour from '../components/Tour.astro';
 import Crowd from '../components/Crowd.astro';
+// AÑADIDO: Importamos el nuevo componente
+import TextWheel from '../components/TextWheel.astro';
 import Footer from '../components/Footer.astro';
 ---
 
@@ -23,6 +25,9 @@ import Footer from '../components/Footer.astro';
             <Manifesto />
             <Tour />
             <Crowd />
+
+            <TextWheel text="TECHNO • OSCAR HERRERA • LIVE • " />
+   
             <Footer />
 
         </div>
@@ -55,6 +60,7 @@ import Footer from '../components/Footer.astro';
 
     // Conectar Lenis con ScrollTrigger para que funcionen juntos
     lenis.on('scroll', ScrollTrigger.update);
+
     gsap.ticker.add((time) => {
         lenis.raf(time * 1000);
     });
@@ -64,7 +70,7 @@ import Footer from '../components/Footer.astro';
     // ---------------------------------------------
     // Busca todas las secciones dentro de los componentes que tengan 'data-bgcolor'
     const sections = document.querySelectorAll('[data-bgcolor]');
-    
+
     sections.forEach(section => {
         const el = section as HTMLElement;
         ScrollTrigger.create({
@@ -93,6 +99,7 @@ import Footer from '../components/Footer.astro';
     // 3. Efecto Glitch Global al hacer Scroll Rápido
     // ---------------------------------------------
     let lastScrollY = 0;
+
     lenis.on('scroll', ({ scroll }: { scroll: number }) => {
         const velocity = Math.abs(scroll - lastScrollY);
         lastScrollY = scroll;

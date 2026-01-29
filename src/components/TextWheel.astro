@@ -1,43 +1,66 @@
 ---
 ---
-<section class="kinetic-section">
-    
-    <!-- FONDO VISUAL CON COLOR -->
-    <div class="background-container">
-        <img src="/assets/foto_dj.jpg" alt="Rave Atmosphere" class="bg-image" />
-        <div class="color-overlay"></div>
-    </div>
-
-    <div class="kinetic-wrapper">
-        
-        <!-- CINTA 1 -->
-        <div class="tape-row" id="row-1">
-            <div class="tape-track">
-                <span class="word solid">HARD TECHNO</span>
-                <span class="word outline">INDUSTRIAL</span>
-                <span class="word solid">RAW ENERGY</span>
-                <span class="word outline">UNDERGROUND</span>
-                <span class="word solid">HARD TECHNO</span>
-                <span class="word outline">INDUSTRIAL</span>
-                <span class="word solid">RAW ENERGY</span>
-                <span class="word outline">UNDERGROUND</span>
+<section class="horizontal-section" id="gallery-strip">
+    <div class="gallery-wrapper">
+        <div class="gallery-track">
+            
+            <!-- ITEM 1: INTRO TEXT -->
+            <div class="gallery-item text-item">
+                <span class="stroke-text">THE</span>
+                <span class="solid-text">VISION</span>
             </div>
-        </div>
 
-        <!-- CINTA 2 -->
-        <div class="tape-row" id="row-2">
-            <div class="tape-track">
-                <span class="word outline">HYPNOTIC</span>
-                <span class="word solid">RHYTHM</span>
-                <span class="word outline">DARKNESS</span>
-                <span class="word solid">EUPHORIA</span>
-                <span class="word outline">HYPNOTIC</span>
-                <span class="word solid">RHYTHM</span>
-                <span class="word outline">DARKNESS</span>
-                <span class="word solid">EUPHORIA</span>
+            <!-- ITEM 2: PROFILE PHOTO -->
+            <div class="gallery-item image-item">
+                <div class="img-container">
+                    <img src="/assets/foto_profile.jpg" alt="Oscar Profile" class="h-img" />
+                </div>
+                <span class="caption">01 — ARTIST</span>
             </div>
-        </div>
 
+            <!-- ITEM 3: CONCEPT TEXT -->
+            <div class="gallery-item text-item">
+                <span class="solid-text">SONIC</span>
+                <span class="stroke-text">DEPTH</span>
+            </div>
+
+            <!-- ITEM 4: CROWD PHOTO -->
+            <div class="gallery-item image-item wide">
+                <div class="img-container">
+                    <img src="/assets/foto_crowd.jpg" alt="Crowd Energy" class="h-img" />
+                </div>
+                <span class="caption">02 — ENERGY</span>
+            </div>
+
+            <!-- ITEM 5: BIG TEXT -->
+            <div class="gallery-item text-item">
+                <span class="solid-text">NO</span>
+                <span class="solid-text">LIMITS</span>
+            </div>
+
+            <!-- ITEM 6: DJ ACTION -->
+            <div class="gallery-item image-item">
+                <div class="img-container">
+                    <img src="/assets/foto_dj.jpg" alt="Live Action" class="h-img" />
+                </div>
+                <span class="caption">03 — PERFORMANCE</span>
+            </div>
+
+             <!-- ITEM 7: PARIS/LOCATION -->
+             <div class="gallery-item image-item">
+                <div class="img-container">
+                    <img src="/assets/foto_paris.jpg" alt="Paris" class="h-img" />
+                </div>
+                <span class="caption">04 — WORLDWIDE</span>
+            </div>
+
+            <!-- ITEM 8: OUTRO -->
+            <div class="gallery-item text-item end">
+                <span class="stroke-text">OSCAR</span>
+                <span class="solid-text">HERRERA</span>
+            </div>
+
+        </div>
     </div>
 </section>
 
@@ -47,165 +70,209 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    const row1 = document.querySelector('#row-1 .tape-track');
-    const row2 = document.querySelector('#row-2 .tape-track');
-    const bgImage = document.querySelector('.bg-image');
+    const section = document.getElementById('gallery-strip');
+    const track = document.querySelector('.gallery-track') as HTMLElement;
+    const images = document.querySelectorAll('.h-img');
 
-    // Velocidad base
-    let xPercent1 = 0;
-    let xPercent2 = 0;
-    let direction = 1;
-    let velocity = 0;
+    let scrollTween: gsap.core.Tween | null = null;
 
-    // Loop de movimiento infinito
-    gsap.to({}, {
-        duration: 0.1,
-        repeat: -1,
-        onRepeat: () => {
-            const baseSpeed = 0.05; 
-            const currentSpeed = baseSpeed + (velocity * 0.08); // Un poco más reactivo
+    function initScroll() {
+        if(!track || !section) return;
 
-            xPercent1 += currentSpeed * direction * -1;
-            xPercent2 += currentSpeed * direction;
-
-            if (xPercent1 <= -50) xPercent1 = 0;
-            if (xPercent1 > 0) xPercent1 = -50;
-            
-            if (xPercent2 <= -50) xPercent2 = 0;
-            if (xPercent2 > 0) xPercent2 = -50;
-
-            gsap.set(row1, { xPercent: xPercent1 });
-            gsap.set(row2, { xPercent: xPercent2 });
-        }
-    });
-
-    ScrollTrigger.create({
-        trigger: ".kinetic-section",
-        start: "top bottom",
-        end: "bottom top",
-        onUpdate: (self) => {
-            velocity = self.getVelocity() / 300;
-            
-            if(velocity > 5) velocity = 5;
-            if(velocity < -5) velocity = -5;
-
-            // Skew Effect
-            gsap.to(".tape-track", {
-                skewX: velocity * -3,
-                duration: 0.5,
-                ease: "power2.out",
-                overwrite: "auto"
+        // Limpiar animaciones previas para evitar conflictos al redimensionar
+        if (scrollTween) {
+            scrollTween.kill();
+            ScrollTrigger.getAll().forEach(t => {
+                if(t.trigger === section) t.kill();
             });
-            
-            // Efecto Parallax en la imagen de fondo (Zoom + Movimiento)
-            if(bgImage) {
-                gsap.to(bgImage, {
-                    scale: 1.1 + (Math.abs(velocity) * 0.02), // Zoom sutil con velocidad
-                    y: velocity * 2,
-                    duration: 0.5,
-                    overwrite: "auto"
-                });
+        }
+
+        // Forzar recalculo de layout para asegurar medidas correctas
+        ScrollTrigger.refresh();
+
+        const trackWidth = track.scrollWidth;
+        const windowWidth = window.innerWidth;
+        
+        // El movimiento debe ser exactamente lo que sobra del ancho
+        const xMovement = -(trackWidth - windowWidth);
+
+        // Si el contenido es menor que la pantalla, no animamos
+        if (trackWidth <= windowWidth) return;
+
+        // Crear Timeline
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                // La duración es igual a la distancia a recorrer para un scroll 1:1 natural
+                end: () => `+=${Math.abs(xMovement)}`, 
+                pin: true,
+                scrub: 1,
+                invalidateOnRefresh: true,
+                anticipatePin: 1,
             }
-            
-            gsap.to(".tape-track", {
-                skewX: 0,
-                duration: 0.5,
-                delay: 0.1,
-                ease: "power2.out",
-                overwrite: "auto"
-            });
-        }
+        });
+
+        // 1. Movimiento Horizontal
+        tl.to(track, {
+            x: xMovement,
+            ease: "none"
+        });
+
+        // 2. Parallax en imágenes
+        images.forEach(img => {
+            gsap.fromTo(img, 
+                { objectPosition: "0% 50%" },
+                {
+                    objectPosition: "100% 50%",
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top top",
+                        end: () => `+=${Math.abs(xMovement)}`,
+                        scrub: 1
+                    }
+                }
+            );
+        });
+
+        scrollTween = tl;
+    }
+
+    // Inicialización robusta
+    window.addEventListener('load', () => {
+        initScroll();
+        ScrollTrigger.refresh(); // Refresco final por seguridad
     });
+    
+    // Reiniciar en resize para evitar roturas
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            initScroll();
+        }, 250);
+    });
+
 </script>
 
 <style>
-    .kinetic-section {
-        position: relative;
+    .horizontal-section {
         background-color: #050505;
         color: #fff;
-        height: 80vh; /* Altura fija para ser una ventana visual */
-        min-height: 600px;
+        height: 100vh;
+        width: 100%;
         overflow: hidden;
         display: flex;
         align-items: center;
-        justify-content: center;
-    }
-
-    /* --- FONDO E IMAGEN --- */
-    .background-container {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        z-index: 0;
-        overflow: hidden;
-    }
-
-    .bg-image {
-        width: 100%; height: 100%;
-        object-fit: cover;
-        opacity: 0.8;
-        transform: scale(1.1); /* Espacio para parallax */
-    }
-
-    .color-overlay {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        /* Gradiente "Club": Violeta oscuro a Azul noche */
-        background: linear-gradient(45deg, rgba(20, 0, 50, 0.8), rgba(0, 20, 60, 0.6));
-        mix-blend-mode: multiply;
-    }
-
-    /* --- CONTENIDO --- */
-    .kinetic-wrapper {
         position: relative;
-        z-index: 10;
+        z-index: 10; /* Asegurar visibilidad sobre otros elementos */
+    }
+
+    .gallery-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        overflow: hidden; /* Importante para que no aparezca scrollbar nativa horizontal */
+    }
+
+    .gallery-track {
+        display: flex;
+        gap: 8vw;
+        padding: 0 8vw;
+        height: 60vh;
+        align-items: center;
+        width: max-content;
+        will-change: transform; /* Optimización de rendimiento */
+    }
+
+    .gallery-item {
         display: flex;
         flex-direction: column;
-        gap: 0; /* Sin espacio para efecto bloque */
-        width: 100%;
-        transform: rotate(-3deg);
-        mix-blend-mode: hard-light; /* Fusión interesante con el fondo */
+        justify-content: center;
+        flex-shrink: 0;
     }
 
-    .tape-row {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        display: flex;
-        padding: 10px 0;
+    /* --- TEXT ITEMS --- */
+    .text-item {
+        justify-content: center;
+        line-height: 0.85;
     }
 
-    .tape-track {
-        display: flex;
-        gap: 2vw;
-        will-change: transform;
-    }
-
-    .word {
+    .solid-text {
         font-family: var(--font-display, sans-serif);
-        font-size: 14vw;
-        line-height: 0.8;
+        font-size: 15vh;
+        color: #fff;
         text-transform: uppercase;
         letter-spacing: -0.04em;
-        font-weight: 900;
+        white-space: nowrap;
     }
 
-    .solid {
-        color: #fff;
-        text-shadow: 0 0 20px rgba(255,255,255,0.3); /* Glow sutil */
-    }
-
-    .outline {
+    .stroke-text {
+        font-family: var(--font-display, sans-serif);
+        font-size: 15vh;
         color: transparent;
-        /* COLOR DE ACENTO: Verde Ácido */
-        -webkit-text-stroke: 2px #ccff00; 
-        opacity: 0.9;
+        -webkit-text-stroke: 2px #fff;
+        text-transform: uppercase;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+        opacity: 0.5;
+    }
+
+    /* --- IMAGE ITEMS --- */
+    .image-item {
+        height: 100%;
+        position: relative;
+        gap: 20px;
+    }
+
+    .img-container {
+        height: 100%;
+        width: 45vh;
+        overflow: hidden;
+        border-radius: 4px;
+        background: #111;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra para profundidad */
+    }
+
+    .image-item.wide .img-container {
+        width: 70vh;
+    }
+
+    .h-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Quitamos grayscale, mantenemos un poco de contraste para look premium */
+        filter: contrast(1.1) saturate(1.1); 
+        transition: transform 0.5s ease;
+    }
+
+    /* Hover effect: Ligero zoom en lugar de cambio de color */
+    .image-item:hover .h-img {
+        transform: scale(1.05);
+    }
+
+    .caption {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        color: #888;
+        border-top: 1px solid #333;
+        padding-top: 10px;
+        display: block;
     }
 
     @media (max-width: 768px) {
-        .word {
-            font-size: 18vw;
-            -webkit-text-stroke: 1px #ccff00;
+        .gallery-track {
+            height: 50vh;
+            gap: 40px;
+            padding: 0 40px;
         }
-        .kinetic-section { height: 60vh; }
+        
+        .solid-text, .stroke-text { font-size: 10vh; }
+        .img-container { width: 35vh; }
+        .image-item.wide .img-container { width: 50vh; }
     }
 </style>

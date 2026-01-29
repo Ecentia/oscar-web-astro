@@ -1,277 +1,103 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+// Importamos los componentes modulares
+import Loader from '../components/Loader.astro';
+import Cursor from '../components/Cursor.astro';
+import Hero from '../components/Hero.astro';
+import Manifesto from '../components/Manifesto.astro';
+import Tour from '../components/Tour.astro';
+import Crowd from '../components/Crowd.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <Layout title="OSCAR HERRERA | GLOBAL FREQUENCY">
     
-    <div class="cursor"></div>
-    <div class="cursor-follower"></div>
-    <div class="noise"></div>
-
-    <div class="loader">
-        <div class="loader-text">LOADING FREQUENCY <span id="counter">0</span>%</div>
-    </div>
+    <Loader />
+    <Cursor />
 
     <div id="smooth-wrapper">
         <div id="smooth-content">
-
-            <section class="hero-section" data-bgcolor="#050505" data-textcolor="#ffffff">
-                <div class="video-bg-container">
-                    <video autoplay muted loop playsinline class="bg-video glitch-target">
-                        <source src="/assets/LONDRES.mp4" type="video/mp4">
-                    </video>
-                </div>
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        <div class="line">OSCAR</div>
-                        <div class="line outline">HERRERA</div>
-                    </h1>
-                    <div class="hero-meta">
-                        <span>GLOBAL DJ</span>
-                        <span>EST. 199X</span>
-                        <span>SCROLL TO START</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="manifesto-section" data-bgcolor="#ffffff" data-textcolor="#000000">
-                <div class="manifesto-grid">
-                    <div class="scrolling-text-container">
-                        <div class="scrolling-text">NO BOUNDARIES — NO GENRES — JUST ENERGY — </div>
-                    </div>
-                    <div class="image-parallax">
-                        <img src="/assets/foto_paris.jpg" alt="Oscar in Paris" class="glitch-target">
-                    </div>
-                    <p class="manifesto-p">
-                        La música es un camino de fe. No importa el obstáculo. <br>
-                        Desde <strong>Londres</strong> hasta <strong>México</strong>.
-                    </p>
-                </div>
-            </section>
-
-            <section class="tour-section" data-bgcolor="#FF3333" data-textcolor="#000000">
-                <div class="sticky-wrapper">
-                    <h2 class="section-title">WORLD<br>WIDE</h2>
-                    <div class="cards-container">
-                        <div class="tour-card">
-                            <video autoplay muted loop playsinline>
-                                <source src="/assets/video_mexico.mp4" type="video/mp4">
-                            </video>
-                            <div class="card-info">
-                                <h3>CDMX</h3>
-                                <p>EDC MEXICO</p>
-                            </div>
-                        </div>
-                        <div class="tour-card" style="margin-top: 20vh;">
-                            <video autoplay muted loop playsinline>
-                                <source src="/assets/canada.mp4" type="video/mp4">
-                            </video>
-                            <div class="card-info">
-                                <h3>VANCOUVER</h3>
-                                <p>SOLD OUT</p>
-                            </div>
-                        </div>
-                        <div class="tour-card photo-card">
-                            <img src="/assets/foto_dj.jpg" alt="Live Set">
-                            <div class="card-info">
-                                <h3>LIVE</h3>
-                                <p>THE ENERGY</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="crowd-section" data-bgcolor="#000000" data-textcolor="#ffffff">
-                <div class="full-image-reveal">
-                    <img src="/assets/foto_crowd.jpg" alt="The Crowd">
-                    <h2 class="crowd-text">WE ARE<br>ONE</h2>
-                </div>
-            </section>
-
-            <section class="footer-section">
-                <div class="footer-content">
-                    <a href="mailto:booking@oscarherrera.com" class="giant-link">BOOKING</a>
-                    <div class="socials">
-                        <a href="#">INSTAGRAM</a>
-                        <a href="#">SPOTIFY</a>
-                        <a href="#">YOUTUBE</a>
-                    </div>
-                    <div class="credits">
-                        OSCAR HERRERA © 2026
-                    </div>
-                </div>
-            </section>
+            
+            <Hero />
+            <Manifesto />
+            <Tour />
+            <Crowd />
+            <Footer />
 
         </div>
     </div>
+
 </Layout>
 
 <script>
-    // Importamos las librerías instaladas
     import { gsap } from "gsap";
     import { ScrollTrigger } from "gsap/ScrollTrigger";
     import Lenis from "@studio-freight/lenis";
 
-    // 1. Setup GSAP & ScrollTrigger
+    // Registrar plugins globalmente
     gsap.registerPlugin(ScrollTrigger);
 
-    // 2. Setup Lenis (Smooth Scroll)
+    // ---------------------------------------------
+    // 1. Configuración Global de Lenis (Smooth Scroll)
+    // ---------------------------------------------
     const lenis = new Lenis({
         duration: 1.2,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true 
+        smoothWheel: true
     });
 
-    // CORRECCIÓN 1: Añadido tipo ': number' al parámetro time
     function raf(time: number) {
         lenis.raf(time);
         requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
 
-    // Conectar Lenis con ScrollTrigger
+    // Conectar Lenis con ScrollTrigger para que funcionen juntos
     lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time)=>{
+    gsap.ticker.add((time) => {
         lenis.raf(time * 1000);
     });
 
-    // 3. Preloader Animation
-    let counter = 0;
-    const counterElement = document.getElementById('counter');
-    const loader = document.querySelector('.loader');
+    // ---------------------------------------------
+    // 2. Sistema Global de Cambio de Color (Body)
+    // ---------------------------------------------
+    // Busca todas las secciones dentro de los componentes que tengan 'data-bgcolor'
+    const sections = document.querySelectorAll('[data-bgcolor]');
+    
+    sections.forEach(section => {
+        const el = section as HTMLElement;
+        ScrollTrigger.create({
+            trigger: el,
+            start: "top 50%",
+            end: "bottom 50%",
+            onEnter: () => updateColors(el),
+            onEnterBack: () => updateColors(el)
+        });
+    });
 
-    if (counterElement && loader) {
-        const interval = setInterval(() => {
-            counter += Math.floor(Math.random() * 5) + 1;
-            if (counter > 100) {
-                counter = 100;
-                clearInterval(interval);
-                // Salida del loader
-                gsap.to(loader, {
-                    yPercent: -100,
-                    duration: 1,
-                    ease: "power4.inOut",
-                    onComplete: initAnimations
-                });
-            }
-            counterElement.innerText = counter.toString();
-        }, 50);
-    } else {
-        initAnimations();
-    }
-
-    // 4. Main Animations Function
-    function initAnimations() {
+    function updateColors(section: HTMLElement) {
+        const bgColor = section.dataset.bgcolor;
+        const textColor = section.dataset.textcolor;
         
-        // A. Hero Title Reveal
-        const tlHero = gsap.timeline();
-        tlHero.from(".line", {
-            y: 200,
-            skewY: 10,
-            opacity: 0,
-            duration: 1.5,
-            stagger: 0.1,
-            ease: "power3.out"
-        });
-
-        // B. Scrolling Text (Marquee)
-        gsap.to(".scrolling-text", {
-            xPercent: -50,
-            ease: "none",
-            scrollTrigger: {
-                trigger: ".manifesto-section",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 0.5
-            }
-        });
-
-        // C. Parallax Images (Manifesto & Tour)
-        const parallaxImages = document.querySelectorAll(".image-parallax img");
-        parallaxImages.forEach(img => {
-            gsap.to(img, {
-                yPercent: 20,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: img.parentElement,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: true
-                }
-            });
-        });
-
-        // D. Background Color Change System
-        const sections = document.querySelectorAll('[data-bgcolor]');
-        sections.forEach(section => {
-            const el = section as HTMLElement; 
-            ScrollTrigger.create({
-                trigger: el,
-                start: "top 50%",
-                end: "bottom 50%",
-                onEnter: () => updateColors(el),
-                onEnterBack: () => updateColors(el)
-            });
-        });
-
-        // CORRECCIÓN 2: Añadido tipo ': HTMLElement' al parámetro section
-        function updateColors(section: HTMLElement) {
-            const bgColor = section.dataset.bgcolor;
-            const textColor = section.dataset.textcolor;
-            
+        if (bgColor && textColor) {
             gsap.to("body", {
                 backgroundColor: bgColor,
                 color: textColor,
                 duration: 0.5
             });
         }
-
-        // E. Tour Cards Stagger Effect
-        gsap.from(".tour-card", {
-            y: 100,
-            opacity: 0,
-            rotation: 5,
-            stagger: 0.3,
-            scrollTrigger: {
-                trigger: ".cards-container",
-                start: "top 70%",
-                end: "bottom center",
-                scrub: 1
-            }
-        });
-
-        // F. Crowd Text Scale
-        gsap.from(".crowd-text", {
-            scale: 0.5,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: ".crowd-section",
-                start: "top center",
-                end: "center center",
-                scrub: true
-            }
-        });
     }
 
-    // 5. Custom Cursor Logic
-    const cursor = document.querySelector('.cursor');
-    const follower = document.querySelector('.cursor-follower');
-
-    if (cursor && follower) {
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, {x: e.clientX, y: e.clientY, duration: 0.1});
-            gsap.to(follower, {x: e.clientX, y: e.clientY, duration: 0.3});
-        });
-    }
-
-    // 6. Glitch Effect on Fast Scroll
+    // ---------------------------------------------
+    // 3. Efecto Glitch Global al hacer Scroll Rápido
+    // ---------------------------------------------
     let lastScrollY = 0;
-    // CORRECCIÓN 3: Tipado explícito para el objeto desturcturado { scroll }
     lenis.on('scroll', ({ scroll }: { scroll: number }) => {
         const velocity = Math.abs(scroll - lastScrollY);
         lastScrollY = scroll;
 
+        // Si la velocidad es alta, aplicamos el efecto a cualquier elemento con clase .glitch-target
         if (velocity > 15) {
             gsap.to(".glitch-target", {
                 skewY: velocity * 0.1,
@@ -287,279 +113,3 @@ import Layout from '../layouts/Layout.astro';
         }
     });
 </script>
-
-<style>
-    /* Estilos específicos portados de style.css */
-
-    /* --- LOADER --- */
-    .loader {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: #000;
-        z-index: 9999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        font-family: var(--font-display);
-    }
-
-    /* --- NOISE OVERLAY --- */
-    .noise {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none;
-        z-index: 9000;
-        opacity: 0.05;
-        background: url('https://grainy-gradients.vercel.app/noise.svg');
-    }
-
-    /* --- CURSOR --- */
-    .cursor {
-        width: 10px; height: 10px;
-        background: #fff;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        mix-blend-mode: difference;
-    }
-    .cursor-follower {
-        width: 40px; height: 40px;
-        border: 1px solid #fff;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        z-index: 9998;
-        transition: transform 0.1s;
-        mix-blend-mode: difference;
-    }
-
-    /* --- HERO SECTION --- */
-    .hero-section {
-        height: 100vh;
-        width: 100%;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-
-    .video-bg-container {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        z-index: -1;
-        filter: brightness(0.6) contrast(1.2);
-    }
-
-    .bg-video {
-        width: 100%; height: 100%;
-        object-fit: cover;
-    }
-
-    .hero-title {
-        font-family: var(--font-display);
-        font-size: 15vw;
-        line-height: 0.85;
-        text-transform: uppercase;
-        text-align: center;
-        z-index: 2;
-        mix-blend-mode: overlay;
-    }
-
-    .line.outline {
-        -webkit-text-stroke: 2px #fff;
-        color: transparent;
-    }
-
-    .hero-meta {
-        position: absolute;
-        bottom: 50px;
-        width: 90%;
-        display: flex;
-        justify-content: space-between;
-        font-size: 14px;
-        text-transform: uppercase;
-        border-top: 1px solid rgba(255,255,255,0.3);
-        padding-top: 20px;
-    }
-
-    /* --- MANIFESTO SECTION --- */
-    .manifesto-section {
-        min-height: 120vh;
-        padding: 100px 5vw;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .scrolling-text-container {
-        position: absolute;
-        top: 10%;
-        left: -20%;
-        width: 150%;
-        transform: rotate(-5deg);
-        opacity: 0.1;
-        white-space: nowrap;
-    }
-
-    .scrolling-text {
-        font-family: var(--font-display);
-        font-size: 20vw;
-    }
-
-    .image-parallax {
-        width: 60%;
-        height: 60vh;
-        margin: 0 auto;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .image-parallax img {
-        width: 100%;
-        height: 120%;
-        object-fit: cover;
-    }
-
-    .manifesto-p {
-        font-size: 2rem;
-        max-width: 600px;
-        margin-top: 50px;
-        align-self: flex-end;
-        line-height: 1.2;
-    }
-
-    /* --- TOUR SECTION --- */
-    .tour-section {
-        min-height: 200vh;
-        padding: 100px 5vw;
-        position: relative;
-    }
-
-    .cards-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 100px;
-        margin-top: 100px;
-    }
-
-    .tour-card {
-        width: 50vw;
-        height: 60vh;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.2);
-        transition: transform 0.3s;
-    }
-
-    .tour-card video, .tour-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: grayscale(100%);
-        transition: filter 0.5s;
-    }
-
-    .tour-card:hover video, .tour-card:hover img {
-        filter: grayscale(0%);
-    }
-
-    .section-title {
-        font-family: var(--font-display);
-        font-size: 10vw;
-        position: absolute;
-        top: 50px;
-        left: 5vw;
-        z-index: 10;
-        pointer-events: none;
-        mix-blend-mode: difference;
-    }
-
-    .card-info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        background: #fff;
-        color: #000;
-        padding: 20px;
-    }
-
-    /* --- CROWD SECTION --- */
-    .crowd-section {
-        height: 100vh;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .full-image-reveal {
-        width: 100%;
-        height: 100%;
-        position: relative;
-    }
-
-    .full-image-reveal img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .crowd-text {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        font-family: var(--font-display);
-        font-size: 18vw;
-        text-align: center;
-        color: #fff;
-        mix-blend-mode: exclusion;
-    }
-
-    /* --- FOOTER --- */
-    .footer-section {
-        height: 80vh;
-        background: #000;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    .giant-link {
-        font-family: var(--font-display);
-        font-size: 12vw;
-        color: #fff;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-
-    .giant-link:hover {
-        color: var(--accent);
-        font-style: italic;
-    }
-
-    .socials {
-        margin-top: 40px;
-        display: flex;
-        gap: 30px;
-        justify-content: center;
-    }
-
-    .socials a {
-        color: #888;
-        text-decoration: none;
-        font-size: 1.2rem;
-    }
-
-    .socials a:hover {
-        color: #fff;
-    }
-</style>

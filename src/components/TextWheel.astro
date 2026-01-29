@@ -1,122 +1,177 @@
 ---
-// src/components/TextWheel.astro
-const phrases = [
-  "OSCAR HERRERA - LIVE PERFORMANCE",
-  "GLOBAL FREQUENCY - WORLD TOUR",
-  "IBIZA RESIDENCY - ALL NIGHT LONG",
-  "MADRID • BERLIN • TOKYO - 2025",
-  "TECHNO CULTURE - UNDERGROUND",
-  "MAIN STAGE - SOLD OUT SHOW",
-  "SOUND SYSTEM - FULL VOLUME",
-  "ELECTRONIC MUSIC - VIBES"
-];
-
-// Mantenemos la duplicación para que se vea el círculo perfecto
-const items = [...phrases, ...phrases];
 ---
-
-<div class="wheel-container">
-  <div class="wheel-viewport">
-    <div class="wheel" id="wheel">
-      {items.map((phrase) => (
-        <div class="wheel-card">
-          <h2>{phrase}</h2>
+<section class="kinetic-section">
+    <div class="kinetic-wrapper">
+        
+        <!-- CINTA 1: Izquierda a Derecha -->
+        <div class="tape-row" id="row-1">
+            <div class="tape-track">
+                <span class="word solid">HARD TECHNO</span>
+                <span class="word outline">INDUSTRIAL</span>
+                <span class="word solid">RAW ENERGY</span>
+                <span class="word outline">UNDERGROUND</span>
+                <span class="word solid">HARD TECHNO</span>
+                <span class="word outline">INDUSTRIAL</span>
+                <span class="word solid">RAW ENERGY</span>
+                <span class="word outline">UNDERGROUND</span>
+            </div>
         </div>
-      ))}
+
+        <!-- CINTA 2: Derecha a Izquierda -->
+        <div class="tape-row" id="row-2">
+            <div class="tape-track">
+                <span class="word outline">HYPNOTIC</span>
+                <span class="word solid">RHYTHM</span>
+                <span class="word outline">DARKNESS</span>
+                <span class="word solid">EUPHORIA</span>
+                <span class="word outline">HYPNOTIC</span>
+                <span class="word solid">RHYTHM</span>
+                <span class="word outline">DARKNESS</span>
+                <span class="word solid">EUPHORIA</span>
+            </div>
+        </div>
+
     </div>
-  </div>
-</div>
+</section>
 
 <script>
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-  gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger);
 
-  const wheel = document.getElementById("wheel");
-  const cards = gsap.utils.toArray(".wheel-card");
-  const numCards = cards.length;
-  
-  // Configuración visual
-  const radius = 350; 
-  const angleStep = 360 / numCards;
+    const row1 = document.querySelector('#row-1 .tape-track');
+    const row2 = document.querySelector('#row-2 .tape-track');
 
-  // 1. Posicionamiento inicial
-  cards.forEach((card: any, index) => {
-    gsap.set(card, {
-      rotationX: -index * angleStep, 
-      z: radius, 
-      transformOrigin: "50% 50% " + -radius + "px"
+    // Velocidad base
+    let xPercent1 = 0;
+    let xPercent2 = 0;
+    let direction = 1;
+    let velocity = 0;
+
+    // Animación constante (loop infinito)
+    gsap.to({}, {
+        duration: 0.1, // Update muy rápido
+        repeat: -1,
+        onRepeat: () => {
+            // Movimiento base constante
+            const baseSpeed = 0.05; 
+            
+            // Sumamos la velocidad del scroll a la base
+            const currentSpeed = baseSpeed + (velocity * 0.05);
+
+            // Actualizamos posiciones
+            xPercent1 += currentSpeed * direction * -1; // Izquierda
+            xPercent2 += currentSpeed * direction;      // Derecha
+
+            // Reset lógico para loop infinito
+            if (xPercent1 <= -50) xPercent1 = 0;
+            if (xPercent1 > 0) xPercent1 = -50;
+            
+            if (xPercent2 <= -50) xPercent2 = 0;
+            if (xPercent2 > 0) xPercent2 = -50;
+
+            // Aplicamos transformaciones
+            gsap.set(row1, { xPercent: xPercent1 });
+            gsap.set(row2, { xPercent: xPercent2 });
+        }
     });
-  });
 
-  // 2. Animación con Scroll (DIRECCIÓN INVERTIDA)
-  gsap.to(wheel, {
-    rotationX: 360, // CAMBIO AQUÍ: Positivo para que baje al hacer scroll down
-    ease: "none",
-    scrollTrigger: {
-      trigger: ".wheel-container",
-      start: "top top",
-      end: "+=2000", 
-      pin: true, 
-      scrub: 1, 
-    }
-  });
+    // ScrollTrigger para detectar velocidad y hacer Skew
+    ScrollTrigger.create({
+        trigger: ".kinetic-section",
+        start: "top bottom",
+        end: "bottom top",
+        onUpdate: (self) => {
+            // Obtenemos la velocidad del scroll
+            velocity = self.getVelocity() / 300; // Normalizamos valor
+            
+            // Limitamos la velocidad máxima para que no se rompa visualmente
+            if(velocity > 5) velocity = 5;
+            if(velocity < -5) velocity = -5;
+
+            // Aplicamos SKEW (deformación) basado en la velocidad
+            // Esto da el efecto de "gelatina" o inercia potente
+            gsap.to(".tape-track", {
+                skewX: velocity * -5, // Invertimos para que se deforme contra el movimiento
+                duration: 0.5,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+            
+            // Restauramos el skew a 0 cuando deja de scrollear
+            gsap.to(".tape-track", {
+                skewX: 0,
+                duration: 0.5,
+                delay: 0.1,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        }
+    });
 </script>
 
 <style>
-  .wheel-container {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #000;
-    overflow: hidden;
-  }
+    .kinetic-section {
+        background-color: #050505;
+        color: #fff;
+        padding: 10vh 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Un borde sutil para separar secciones */
+        border-top: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 
-  .wheel-viewport {
-    perspective: 1200px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-  }
+    .kinetic-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 2vw; /* Espacio entre las dos líneas */
+        width: 100%;
+        transform: rotate(-2deg); /* Ligera inclinación general para dinamismo */
+    }
 
-  .wheel {
-    position: relative;
-    width: 100%;
-    height: 100px;
-    transform-style: preserve-3d;
-  }
+    .tape-row {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        display: flex;
+    }
 
-  .wheel-card {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backface-visibility: hidden;
-  }
+    .tape-track {
+        display: flex;
+        gap: 4vw; /* Espacio entre palabras */
+        will-change: transform; /* Optimización de rendimiento */
+    }
 
-  h2 {
-    font-family: 'Impact', sans-serif;
-    font-size: 4rem; 
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.9);
-    text-transform: uppercase;
-    white-space: nowrap;
-    margin: 0;
-    letter-spacing: 2px;
-  }
-  
-  @media (max-width: 768px) {
-    h2 { font-size: 2.5rem; }
-  }
+    .word {
+        font-family: var(--font-display, sans-serif);
+        font-size: 15vw; /* Texto GIGANTE */
+        line-height: 0.85;
+        text-transform: uppercase;
+        letter-spacing: -0.04em;
+    }
+
+    .solid {
+        color: #fff;
+    }
+
+    .outline {
+        color: transparent;
+        -webkit-text-stroke: 2px #fff; /* Solo borde */
+        opacity: 0.5; /* Un poco más sutil para dar profundidad */
+    }
+
+    @media (max-width: 768px) {
+        .word {
+            font-size: 20vw; /* Aún más grande en móvil para impacto */
+            -webkit-text-stroke: 1px #fff;
+        }
+        .kinetic-wrapper {
+            gap: 5vw;
+            transform: rotate(-5deg); /* Más inclinado en móvil */
+        }
+    }
 </style>

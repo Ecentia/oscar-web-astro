@@ -1,57 +1,336 @@
 ---
 ---
-<section class="footer-section">
+<footer class="footer-section" id="footer">
+    
+    <!-- Background Texture (Hidden by default, reveals on hover) -->
+    <div class="footer-bg">
+        <div class="overlay"></div>
+        <img src="/assets/foto_crowd.jpg" alt="Background Texture" class="bg-texture" />
+    </div>
+
     <div class="footer-content">
-        <a href="mailto:booking@oscarherrera.com" class="giant-link">BOOKING</a>
-        <div class="socials">
-            <a href="#">INSTAGRAM</a>
-            <a href="#">SPOTIFY</a>
-            <a href="#">YOUTUBE</a>
+        
+        <!-- 1. Infinite Marquee Top -->
+        <div class="marquee-wrapper">
+            <div class="marquee-track">
+                <span>GLOBAL FREQUENCY</span> <span class="divider">•</span>
+                <span>AVAILABLE FOR BOOKINGS</span> <span class="divider">•</span>
+                <span>WORLDWIDE TOURS</span> <span class="divider">•</span>
+                <span>GLOBAL FREQUENCY</span> <span class="divider">•</span>
+                <span>AVAILABLE FOR BOOKINGS</span> <span class="divider">•</span>
+                <span>WORLDWIDE TOURS</span> <span class="divider">•</span>
+            </div>
         </div>
-        <div class="credits">
-            OSCAR HERRERA © 2026
+
+        <!-- 2. Main Grid: Contact & Socials -->
+        <div class="info-container">
+            <div class="info-block contact">
+                <span class="label">SAY HELLO</span>
+                <a href="mailto:booking@oscarherrera.com" class="big-link email">
+                    booking@<br>oscarherrera.com
+                </a>
+            </div>
+
+            <div class="info-block socials">
+                <span class="label">FOLLOW</span>
+                <div class="social-list">
+                    <a href="#" class="social-link">INSTAGRAM <span class="arrow">↗</span></a>
+                    <a href="#" class="social-link">SOUNDCLOUD <span class="arrow">↗</span></a>
+                    <a href="#" class="social-link">SPOTIFY <span class="arrow">↗</span></a>
+                </div>
+            </div>
+
+            <div class="info-block action">
+                <button id="scrollTopBtn" class="scroll-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 19V5M5 12l7-7 7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Massive Brand Name -->
+        <div class="brand-wrapper">
+            <h1 class="giant-name">
+                <span class="char">O</span>
+                <span class="char">S</span>
+                <span class="char">C</span>
+                <span class="char">A</span>
+                <span class="char">R</span>
+                <span class="spacer"> </span>
+                <span class="char">H</span>
+                <span class="char">E</span>
+                <span class="char">R</span>
+                <span class="char">R</span>
+                <span class="char">E</span>
+                <span class="char">R</span>
+                <span class="char">A</span>
+            </h1>
+        </div>
+
+        <!-- Bottom Copyright -->
+        <div class="legal-row">
+            <span>© 2026 OSCAR HERRERA</span>
+            <span>ALL RIGHTS RESERVED</span>
         </div>
     </div>
-</section>
+</footer>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const footer = document.querySelector('.footer-section');
+    const bgTexture = document.querySelector('.bg-texture');
+    const chars = document.querySelectorAll('.giant-name .char');
+    const socialLinks = document.querySelectorAll('.social-link');
+    const marqueeTrack = document.querySelector('.marquee-track');
+
+    // 1. Initial Setups
+    gsap.set(chars, { yPercent: 120, rotateX: -90, opacity: 0 });
+    gsap.set(bgTexture, { scale: 1.1, opacity: 0 });
+    
+    // 2. Entrance Animation (ScrollTrigger)
+    ScrollTrigger.create({
+        trigger: footer,
+        start: "top 60%", 
+        onEnter: () => {
+            gsap.to(chars, {
+                yPercent: 0,
+                rotateX: 0,
+                opacity: 1,
+                stagger: 0.05,
+                duration: 1.2,
+                ease: "power4.out"
+            });
+            
+            gsap.from(".info-block", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out",
+                delay: 0.2
+            });
+        }
+    });
+
+    // 3. Hover Interaction (Background Reveal)
+    if(footer && bgTexture) {
+        footer.addEventListener('mouseenter', () => {
+            gsap.to(bgTexture, { opacity: 0.15, scale: 1, duration: 0.8, ease: "power2.out" });
+        });
+        footer.addEventListener('mouseleave', () => {
+            gsap.to(bgTexture, { opacity: 0, scale: 1.1, duration: 0.8, ease: "power2.out" });
+        });
+    }
+
+    // 4. Marquee Animation
+    if(marqueeTrack) {
+        gsap.to(marqueeTrack, {
+            xPercent: -50,
+            repeat: -1,
+            duration: 20,
+            ease: "linear"
+        });
+    }
+
+    // 5. Scroll Top
+    document.getElementById('scrollTopBtn')?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+</script>
 
 <style>
     .footer-section {
-        height: 80vh;
-        background: #000;
+        position: relative;
+        background-color: #050505;
         color: #fff;
+        min-height: 100vh;
+        overflow: hidden;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding-top: 80px;
     }
 
-    .giant-link {
-        font-family: var(--font-display);
-        font-size: 12vw;
+    /* Background Texture */
+    .footer-bg {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .bg-texture {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        filter: grayscale(100%) contrast(1.2);
+    }
+    
+    .overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, #050505 0%, rgba(5,5,5,0.8) 100%);
+        z-index: 1;
+    }
+
+    .footer-content {
+        position: relative;
+        z-index: 2;
+        padding: 0 4vw 2vw 4vw;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+
+    /* Marquee */
+    .marquee-wrapper {
+        position: absolute;
+        top: 0; left: 0; width: 100%;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding: 12px 0;
+        overflow: hidden;
+        background: #050505;
+    }
+
+    .marquee-track {
+        display: flex;
+        white-space: nowrap;
+        gap: 4vw;
+        font-family: var(--font-mono, monospace);
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #666;
+    }
+    
+    .divider { color: var(--accent, #ff3333); }
+
+    /* Info Grid */
+    .info-container {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr auto;
+        gap: 40px;
+        margin-top: 120px;
+        align-items: flex-start;
+    }
+
+    .label {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.75rem;
+        color: #555;
+        margin-bottom: 15px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .big-link {
+        font-family: var(--font-display, sans-serif);
+        font-size: 3.5vw;
+        line-height: 1;
         color: #fff;
         text-decoration: none;
         transition: color 0.3s;
     }
+    .big-link:hover { color: #888; }
 
-    .giant-link:hover {
-        color: var(--accent);
-        font-style: italic;
-    }
-
-    .socials {
-        margin-top: 40px;
+    .social-list {
         display: flex;
-        gap: 30px;
-        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
     }
 
-    .socials a {
-        color: #888;
-        text-decoration: none;
-        font-size: 1.2rem;
-    }
-
-    .socials a:hover {
+    .social-link {
+        font-family: var(--font-display, sans-serif);
+        font-size: 1.8rem;
         color: #fff;
+        text-decoration: none;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.3s;
+    }
+    
+    .social-link:hover {
+        transform: translateX(10px);
+        color: #ccc;
+    }
+
+    .arrow { font-size: 1rem; opacity: 0.5; }
+
+    /* Scroll Circle Button */
+    .scroll-circle {
+        width: 100px; height: 100px;
+        border-radius: 50%;
+        background: #fff;
+        color: #000;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .scroll-circle:hover { transform: scale(1.15); }
+    .scroll-circle svg { width: 30px; height: 30px; }
+
+    /* Brand Name */
+    .brand-wrapper {
+        margin-top: auto;
+        padding-top: 60px;
+        overflow: hidden;
+    }
+
+    .giant-name {
+        font-family: var(--font-display, sans-serif);
+        font-size: 16vw; /* Massive Size */
+        line-height: 0.75;
+        text-transform: uppercase;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        width: 100%;
+        user-select: none;
+    }
+
+    .char {
+        display: inline-block;
+        transform-origin: bottom;
+        transition: color 0.3s;
+    }
+
+    .giant-name:hover .char {
+        color: transparent;
+        -webkit-text-stroke: 1px #fff;
+    }
+
+    /* Legal */
+    .legal-row {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 20px;
+        margin-top: 20px;
+        font-family: var(--font-mono, monospace);
+        font-size: 0.75rem;
+        color: #444;
+    }
+
+    @media (max-width: 900px) {
+        .info-container { grid-template-columns: 1fr; gap: 60px; }
+        .big-link { font-size: 10vw; }
+        .giant-name { font-size: 14vw; flex-wrap: wrap; justify-content: center; text-align: center; }
+        .scroll-circle { position: absolute; top: 80px; right: 20px; width: 60px; height: 60px; }
     }
 </style>

@@ -2,9 +2,7 @@
 ---
 <section class="hero-section" id="hero">
     
-    <!-- BACKGROUND VIDEO -->
     <div class="video-container">
-        <!-- Asegúrate de que el video esté en la carpeta public -->
         <video 
             autoplay 
             loop 
@@ -13,47 +11,49 @@
             class="hero-video"
             id="main-video"
         >
-            <source src="/public/assets/LONDRES.mp4" type="video/mp4">
+            <source src="/assets/videoclip2.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
     </div>
 
-    <!-- UI LAYER -->
     <div class="hero-ui">
         
-        <!-- TOP BRANDING -->
-        <div class="brand-top">
-            <h1 class="brand-text outline">OSCAR</h1>
-            <div class="live-indicator">
-                <span class="dot"></span> LIVE
+        <div class="brand-center">
+            <div class="text-wrapper top-text">
+                <h1 class="brand-text outline" id="text-oscar">OSCAR</h1>
+            </div>
+            <div class="text-wrapper bottom-text">
+                <h1 class="brand-text solid" id="text-herrera">HERRERA</h1>
             </div>
         </div>
 
-        <!-- CENTER ACTION (Clean Area) -->
-        <div class="center-controls">
-            <button class="control-btn" id="toggle-ui" aria-label="Hide UI">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <span class="tooltip">VIEW MODE</span>
-            </button>
-            
-            <button class="control-btn" id="toggle-sound" aria-label="Unmute">
-                <div class="equalizer">
-                    <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
-                </div>
-                <span class="tooltip">SOUND ON</span>
-            </button>
+        <div class="top-info">
+             <div class="live-indicator">
+                <span class="dot"></span> LIVE SET
+            </div>
         </div>
 
-        <!-- BOTTOM BRANDING -->
-        <div class="brand-bottom">
+        <div class="bottom-controls">
+            
             <div class="scroll-indicator">
                 <span>SCROLL</span>
                 <div class="line"></div>
             </div>
-            <h1 class="brand-text solid">HERRERA</h1>
+
+            <div class="control-group">
+                <button class="control-btn" id="toggle-ui" aria-label="Hide UI">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+                
+                <button class="control-btn" id="toggle-sound" aria-label="Unmute">
+                    <div class="equalizer">
+                        <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                    </div>
+                </button>
+            </div>
         </div>
 
     </div>
@@ -62,7 +62,11 @@
 
 <script>
     import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Referencias al DOM
     const video = document.getElementById('main-video') as HTMLVideoElement;
     const soundBtn = document.getElementById('toggle-sound');
     const uiBtn = document.getElementById('toggle-ui');
@@ -70,16 +74,76 @@
     const heroUI = document.querySelector('.hero-ui');
     
     // 1. Entrance Animation
-    const tl = gsap.timeline({ delay: 0.5 });
-    
-    tl.from('.brand-top', { y: -100, opacity: 0, duration: 1.2, ease: "power4.out" })
-      .from('.brand-bottom', { y: 100, opacity: 0, duration: 1.2, ease: "power4.out" }, "<")
-      .from('.center-controls', { scale: 0, opacity: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=0.5");
+    const tl = gsap.timeline({ delay: 0.2 });
 
-    // 2. Sound Toggle Logic
+    tl.from('.brand-text.outline', { 
+        y: "120%", 
+        opacity: 0, 
+        duration: 1.4, 
+        ease: "power3.out",
+        skewY: 5 
+    })
+    .from('.brand-text.solid', { 
+        y: "120%", 
+        opacity: 0, 
+        duration: 1.4, 
+        ease: "power3.out",
+        skewY: 5 
+    }, "-=1.2")
+    .from('.top-info, .bottom-controls', { 
+        opacity: 0, 
+        y: 20,
+        duration: 1, 
+        ease: "power2.out" 
+    }, "-=0.8");
+
+    // 2. SCROLL ANIMATION (Zoom Out + Separación)
+    
+    // OSCAR: Izquierda y Fondo
+    gsap.to("#text-oscar", {
+        xPercent: -150,
+        scale: 0.6,
+        ease: "none",
+        force3D: true,
+        scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "bottom top", 
+            scrub: 0.5
+        }
+    });
+
+    // HERRERA: Derecha y Fondo
+    gsap.to("#text-herrera", {
+        xPercent: 150,
+        scale: 0.6,
+        ease: "none",
+        force3D: true,
+        scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.5
+        }
+    });
+
+    // Controles desaparecen al hacer scroll
+    gsap.to(".top-info, .bottom-controls", {
+        opacity: 0,
+        pointerEvents: 'none', // Importante para que no molesten al desaparecer
+        scrollTrigger: {
+            trigger: "#hero",
+            start: "top top",
+            end: "15% top",
+            scrub: true
+        }
+    });
+
+
+    // 3. LÓGICA DE SONIDO (Toggle Sound)
     let isMuted = true;
     
-    // Animación del ecualizador (pausada por defecto)
+    // Animación del ecualizador
     const eqAnim = gsap.to(bars, {
         height: "100%",
         duration: 0.4,
@@ -93,40 +157,52 @@
     });
 
     if(soundBtn && video) {
-        soundBtn.addEventListener('click', () => {
+        soundBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar que el click pase al fondo
             if(isMuted) {
                 video.muted = false;
                 eqAnim.play();
                 soundBtn.classList.add('active');
-                gsap.to(soundBtn.querySelector('.tooltip'), { text: "MUTED" }); // Cambiar texto opcional
             } else {
                 video.muted = true;
                 eqAnim.pause();
-                gsap.to(bars, { height: "20%" }); // Reset altura
+                gsap.to(bars, { height: "20%" }); // Resetear barras
                 soundBtn.classList.remove('active');
             }
             isMuted = !isMuted;
         });
     }
 
-    // 3. View Mode (Hide UI)
+    // 4. LÓGICA DE UI (Ocultar Letras)
     let isHidden = false;
-    
-    if(uiBtn && heroUI) {
-        uiBtn.addEventListener('click', () => {
+    if(uiBtn) {
+        uiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             if(!isHidden) {
-                // Ocultar todo menos el botón de volver
-                gsap.to(['.brand-top', '.brand-bottom', '#toggle-sound'], { opacity: 0, pointerEvents: 'none', duration: 0.5 });
-                uiBtn.classList.add('active'); // Cambiar icono visualmente si se desea
+                // Ocultar: Texto central, info superior, scroll indicator
+                gsap.to(['.brand-center', '.top-info', '.scroll-indicator'], { 
+                    opacity: 0, 
+                    y: 20,
+                    pointerEvents: 'none', 
+                    duration: 0.5 
+                });
+                // Mover el botón de sonido fuera o desvanecerlo si quieres limpiar todo
+                // Aquí solo ocultamos el texto como pediste
+                
+                uiBtn.classList.add('hidden-mode'); // Estilo visual del botón activo
             } else {
-                // Mostrar todo
-                gsap.to(['.brand-top', '.brand-bottom', '#toggle-sound'], { opacity: 1, pointerEvents: 'all', duration: 0.5 });
-                uiBtn.classList.remove('active');
+                // Mostrar todo de nuevo
+                gsap.to(['.brand-center', '.top-info', '.scroll-indicator'], { 
+                    opacity: 1, 
+                    y: 0,
+                    pointerEvents: 'all', 
+                    duration: 0.5 
+                });
+                uiBtn.classList.remove('hidden-mode');
             }
             isHidden = !isHidden;
         });
     }
-
 </script>
 
 <style>
@@ -137,6 +213,7 @@
         overflow: hidden;
         background: #000;
         color: #fff;
+        perspective: 1000px; 
     }
 
     /* --- VIDEO LAYER --- */
@@ -144,6 +221,7 @@
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
         z-index: 0;
+        transform: translateZ(0); 
     }
 
     .hero-video {
@@ -153,9 +231,9 @@
 
     .video-overlay {
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        /* Vignette sutil para que el texto blanco se lea en los bordes */
-        background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.3) 100%);
         pointer-events: none;
     }
 
@@ -165,155 +243,187 @@
         z-index: 10;
         height: 100%;
         width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 2vw;
+        display: grid;
+        grid-template-rows: auto 1fr auto; 
+        padding: 2rem 3rem;
+        box-sizing: border-box;
+        pointer-events: none; /* Dejar pasar clicks a través de las áreas vacías */
     }
 
-    /* TYPOGRAPHY */
+    /* CENTER BRANDING */
+    .brand-center {
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+        will-change: transform;
+        pointer-events: none; /* El texto no bloquea clicks */
+    }
+
+    .text-wrapper {
+        overflow: visible; 
+        padding: 10px 20px; 
+        margin: -10px 0;
+    }
+
     .brand-text {
         font-family: var(--font-display, sans-serif);
-        font-size: 14vw;
-        line-height: 0.75;
+        font-size: 15vw;
+        line-height: 0.9;
         margin: 0;
         text-transform: uppercase;
         letter-spacing: -0.04em;
-        mix-blend-mode: exclusion; /* CLAVE: Invierte colores sobre el video */
+        text-align: center;
+        position: relative;
+        transform: translateZ(0); 
+        backface-visibility: hidden;
     }
 
+    /* OSCAR */
     .outline {
         color: transparent;
         -webkit-text-stroke: 2px #fff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
+    /* HERRERA */
     .solid {
         color: #fff;
+        -webkit-text-stroke: 4px #000; 
+        paint-order: stroke fill; 
+        text-shadow: 0 10px 20px rgba(0,0,0,0.8);
     }
 
-    /* TOP BAR */
-    .brand-top {
+    /* TOP INFO */
+    .top-info {
+        grid-row: 1;
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        justify-content: flex-end;
+        pointer-events: auto; /* Permitir interacción si hubiera botones aquí */
     }
 
     .live-indicator {
         font-family: var(--font-mono, monospace);
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         display: flex;
         align-items: center;
         gap: 8px;
-        background: rgba(255,255,255,0.1);
-        padding: 5px 12px;
-        border-radius: 20px;
-        backdrop-filter: blur(5px);
+        background: rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 6px 14px;
+        border-radius: 30px;
+        backdrop-filter: blur(10px);
+        letter-spacing: 0.1em;
     }
 
     .dot {
-        width: 8px; height: 8px;
-        background-color: #ff0000;
+        width: 6px; height: 6px;
+        background-color: #ff3b3b;
         border-radius: 50%;
-        box-shadow: 0 0 10px #ff0000;
-        animation: pulse 1.5s infinite;
+        box-shadow: 0 0 8px #ff3b3b;
+        animation: pulse 2s infinite;
     }
 
-    /* BOTTOM BAR */
-    .brand-bottom {
+    /* BOTTOM CONTROLS - Aquí están tus botones */
+    .bottom-controls {
+        grid-row: 3;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
+        width: 100%;
+        
+        /* CORRECCIÓN CLAVE: */
+        position: relative;
+        z-index: 100; /* Asegura que estén ENCIMA de todo */
+        pointer-events: auto; /* Habilitar clicks */
     }
 
     .scroll-indicator {
         display: flex;
-        flex-direction: column;
+        flex-direction: row; 
         align-items: center;
-        gap: 10px;
+        gap: 15px;
         font-family: var(--font-mono, monospace);
         font-size: 0.7rem;
-        margin-bottom: 2vw;
+        opacity: 0.8;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
     .line {
-        width: 1px; height: 40px;
+        width: 40px; height: 1px; 
         background: #fff;
-        opacity: 0.5;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
-    /* CENTER CONTROLS */
-    .center-controls {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
+    .control-group {
         display: flex;
-        gap: 20px;
+        gap: 15px;
+        pointer-events: auto; /* Doble seguridad para clicks */
     }
 
     .control-btn {
-        background: rgba(0,0,0,0.3);
-        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.2);
         color: #fff;
-        width: 60px; height: 60px;
+        width: 50px; height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
-        position: relative;
+        backdrop-filter: blur(8px);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        pointer-events: auto;
     }
 
     .control-btn:hover {
         background: #fff;
         color: #000;
-        transform: scale(1.1);
+        transform: scale(1.05);
+        border-color: #fff;
     }
-    
+
     .control-btn:hover .bar { background: #000; }
 
-    .tooltip {
-        position: absolute;
-        bottom: -30px;
-        font-family: var(--font-mono, monospace);
-        font-size: 0.6rem;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: 0.3s;
-        white-space: nowrap;
+    .control-btn.hidden-mode {
+        opacity: 0.5;
+        background: rgba(255,255,255,0.2);
     }
-
-    .control-btn:hover .tooltip { opacity: 1; transform: translateY(0); }
+    .control-btn.hidden-mode:hover {
+        opacity: 1;
+    }
 
     /* EQUALIZER */
     .equalizer {
         display: flex;
         gap: 3px;
-        height: 20px;
+        height: 14px;
         align-items: flex-end;
     }
 
     .bar {
-        width: 3px;
-        height: 20%; /* Altura inicial */
+        width: 2px;
+        height: 20%;
         background: #fff;
         border-radius: 2px;
+        transition: background 0.3s;
     }
 
     @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
     }
 
     @media (max-width: 768px) {
-        .brand-text { font-size: 18vw; }
-        .hero-ui { padding: 15px; }
-        .center-controls { top: 60%; } /* Bajar controles en móvil */
-        
-        /* En móvil, apilamos: OSCAR arriba, HERRERA abajo */
-        .brand-top { flex-direction: column-reverse; align-items: flex-start; gap: 10px; }
-        .live-indicator { align-self: flex-end; }
+        .hero-ui { padding: 1.5rem; }
+        .brand-text { font-size: 17vw; } 
+        .bottom-controls { flex-direction: column-reverse; gap: 20px; align-items: center; }
+        .scroll-indicator { display: none; }
+        .top-info { justify-content: center; }
+        .text-wrapper { padding: 5px 10px; margin: 0; }
     }
 </style>

@@ -4,7 +4,6 @@
     
     <div class="sticky-wrapper">
         
-        <!-- PANEL 1: EL VACÍO OSCURO -->
         <div class="panel panel-1">
             <div class="content-box">
                 <span class="label">01 — FILOSOFÍA</span>
@@ -14,19 +13,17 @@
             </div>
         </div>
 
-        <!-- PANEL 2: LA IMAGEN (Cubre el Panel 1) -->
         <div class="panel panel-2">
             <div class="img-wrapper">
                 <img src="/assets/foto_crowd.jpg" alt="Público" class="panel-img" />
                 <div class="img-overlay"></div>
             </div>
             <div class="floating-text">
-                <p style="text-transform: uppercase;">Ama a tu familia, trabaja duro, vive tu pasión.</p>
-                <p style="text-transform: uppercase;">Crea un viaje, no solo toques música.</p>
+                <p class="manifesto-phrase">Ama a tu familia, trabaja duro, vive tu pasión.</p>
+                <p class="manifesto-phrase">Crea un viaje, no solo toques música.</p>
             </div>
         </div>
 
-        <!-- PANEL 3: LA LUZ (Cubre el Panel 2) -->
         <div class="panel panel-3">
             <div class="content-box light-mode">
                 <span class="label">02 — REALIDAD</span>
@@ -62,9 +59,6 @@
         end: "+=300%", // Scroll largo para dar tiempo a las animaciones
         pin: true,
         scrub: 1, // Suavizado
-        onUpdate: (self) => {
-            // No necesitamos lógica compleja aquí, usamos el timeline abajo
-        },
         animation: gsap.timeline()
             // 1. Panel 2 (Imagen) sube cubriendo el Panel 1
             .to(panel2, { 
@@ -79,8 +73,8 @@
                 duration: 1 
             }, "<")
             
-            // Pausa visual para ver la foto...
-            .to({}, { duration: 0.2 }) 
+            // Pausa visual para ver la foto y leer el texto...
+            .to({}, { duration: 0.5 }) 
 
             // 2. Panel 3 (Blanco) sube cubriendo el Panel 2
             .to(panel3, { 
@@ -144,15 +138,18 @@
     }
 
     .panel-img {
-        width: 100%; height: 100%;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        filter: grayscale(100%) contrast(1.1); /* Blanco y negro estricto */
+        /* Quitamos el filtro grayscale para que se vea más vivo, o lo reducimos */
+        filter: grayscale(80%) contrast(1.1); 
     }
 
     .img-overlay {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.3); /* Sombra ligera para texto */
+        /* Aumentamos un poco la opacidad para que el texto resalte más */
+        background: rgba(0,0,0,0.5);
     }
 
     .floating-text {
@@ -161,11 +158,19 @@
         text-align: center;
         font-family: var(--font-mono, monospace);
         color: #fff;
-        font-size: 1.2rem;
-        letter-spacing: 0.2em;
-        line-height: 2;
-        mix-blend-mode: overlay; /* Efecto elegante sobre la foto */
+        font-size: 1.3rem; /* Un poco más grande */
+        letter-spacing: 0.1em;
+        line-height: 1.8;
         font-weight: bold;
+        padding: 0 20px;
+        
+        /* SOLUCIÓN DE LEGIBILIDAD: Sombra en lugar de blend-mode */
+        text-shadow: 0 2px 15px rgba(0,0,0,0.9);
+    }
+
+    .manifesto-phrase {
+        margin: 10px 0;
+        text-transform: uppercase;
     }
 
     /* --- PANEL 3: BLANCO --- */
@@ -195,11 +200,11 @@
 
     .huge-text {
         font-family: var(--font-display, sans-serif);
-        font-size: 10vw; /* Ajustado ligeramente para textos más largos en ES */
-        line-height: 1.1; /* Aumentado para dar aire (antes 0.85) */
+        font-size: 10vw; 
+        line-height: 1.1;
         text-transform: uppercase;
         margin: 0;
-        letter-spacing: 0.02em; /* Separado un poco las letras (antes -0.04em) */
+        letter-spacing: 0.02em; 
     }
 
     .action-btn {
@@ -218,6 +223,6 @@
 
     @media (max-width: 768px) {
         .huge-text { font-size: 14vw; }
-        .floating-text { font-size: 0.9rem; padding: 0 20px; }
+        .floating-text { font-size: 1rem; padding: 0 15px; }
     }
 </style>

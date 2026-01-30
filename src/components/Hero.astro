@@ -29,7 +29,8 @@
 
         <div class="top-info">
              <div class="live-indicator">
-                <span class="dot"></span> LIVE SET
+                <span class="dot"></span> 
+                LIVE SET
             </div>
         </div>
 
@@ -65,17 +66,16 @@
     import { ScrollTrigger } from "gsap/ScrollTrigger";
 
     gsap.registerPlugin(ScrollTrigger);
-    
+
     // Referencias al DOM
     const video = document.getElementById('main-video') as HTMLVideoElement;
     const soundBtn = document.getElementById('toggle-sound');
     const uiBtn = document.getElementById('toggle-ui');
     const bars = document.querySelectorAll('.equalizer .bar');
     const heroUI = document.querySelector('.hero-ui');
-    
+
     // 1. Entrance Animation
     const tl = gsap.timeline({ delay: 0.2 });
-
     tl.from('.brand-text.outline', { 
         y: "120%", 
         opacity: 0, 
@@ -127,10 +127,12 @@
         }
     });
 
-    // Controles desaparecen al hacer scroll
-    gsap.to(".top-info, .bottom-controls", {
+    // --- CORRECCIÓN AQUÍ ---
+    // Antes ocultaba ".bottom-controls" entero. Ahora solo ocultamos ".scroll-indicator"
+    // para que los botones (.control-group) sigan visibles.
+    gsap.to(".top-info, .scroll-indicator", {
         opacity: 0,
-        pointerEvents: 'none', // Importante para que no molesten al desaparecer
+        pointerEvents: 'none', 
         scrollTrigger: {
             trigger: "#hero",
             start: "top top",
@@ -139,10 +141,9 @@
         }
     });
 
-
     // 3. LÓGICA DE SONIDO (Toggle Sound)
     let isMuted = true;
-    
+
     // Animación del ecualizador
     const eqAnim = gsap.to(bars, {
         height: "100%",
@@ -175,6 +176,7 @@
 
     // 4. LÓGICA DE UI (Ocultar Letras)
     let isHidden = false;
+
     if(uiBtn) {
         uiBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -186,8 +188,6 @@
                     pointerEvents: 'none', 
                     duration: 0.5 
                 });
-                // Mover el botón de sonido fuera o desvanecerlo si quieres limpiar todo
-                // Aquí solo ocultamos el texto como pediste
                 
                 uiBtn.classList.add('hidden-mode'); // Estilo visual del botón activo
             } else {
@@ -221,7 +221,7 @@
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
         z-index: 0;
-        transform: translateZ(0); 
+        transform: translateZ(0);
     }
 
     .hero-video {
@@ -247,7 +247,8 @@
         grid-template-rows: auto 1fr auto; 
         padding: 2rem 3rem;
         box-sizing: border-box;
-        pointer-events: none; /* Dejar pasar clicks a través de las áreas vacías */
+        pointer-events: none;
+        /* Dejar pasar clicks a través de las áreas vacías */
     }
 
     /* CENTER BRANDING */
@@ -260,11 +261,12 @@
         position: relative;
         z-index: 2;
         will-change: transform;
-        pointer-events: none; /* El texto no bloquea clicks */
+        pointer-events: none;
+        /* El texto no bloquea clicks */
     }
 
     .text-wrapper {
-        overflow: visible; 
+        overflow: visible;
         padding: 10px 20px; 
         margin: -10px 0;
     }
@@ -320,7 +322,8 @@
     }
 
     .dot {
-        width: 6px; height: 6px;
+        width: 6px;
+        height: 6px;
         background-color: #ff3b3b;
         border-radius: 50%;
         box-shadow: 0 0 8px #ff3b3b;
@@ -338,7 +341,8 @@
         /* CORRECCIÓN CLAVE: */
         position: relative;
         z-index: 100; /* Asegura que estén ENCIMA de todo */
-        pointer-events: auto; /* Habilitar clicks */
+        pointer-events: auto;
+        /* Habilitar clicks */
     }
 
     .scroll-indicator {
@@ -386,7 +390,8 @@
         border-color: #fff;
     }
 
-    .control-btn:hover .bar { background: #000; }
+    .control-btn:hover .bar { background: #000;
+    }
 
     .control-btn.hidden-mode {
         opacity: 0.5;
@@ -413,17 +418,25 @@
     }
 
     @keyframes pulse {
-        0% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(0.8); }
-        100% { opacity: 1; transform: scale(1); }
+        0% { opacity: 1;
+        transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.8);
+        }
+        100% { opacity: 1; transform: scale(1);
+        }
     }
 
     @media (max-width: 768px) {
-        .hero-ui { padding: 1.5rem; }
-        .brand-text { font-size: 17vw; } 
-        .bottom-controls { flex-direction: column-reverse; gap: 20px; align-items: center; }
-        .scroll-indicator { display: none; }
-        .top-info { justify-content: center; }
+        .hero-ui { padding: 1.5rem;
+        }
+        .brand-text { font-size: 17vw;
+        } 
+        .bottom-controls { flex-direction: column-reverse; gap: 20px; align-items: center;
+        }
+        .scroll-indicator { display: none;
+        }
+        .top-info { justify-content: center;
+        }
         .text-wrapper { padding: 5px 10px; margin: 0; }
     }
 </style>

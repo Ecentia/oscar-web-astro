@@ -20,7 +20,6 @@ const tourDates = [
     </div>
 
     <div class="tour-list">
-        <!-- Header de la tabla (oculto en móvil) -->
         <div class="tour-row header-row">
             <span class="col date">DATE</span>
             <span class="col city">CITY</span>
@@ -137,7 +136,8 @@ const tourDates = [
         padding: 30px 0;
         border-bottom: 1px solid rgba(255,255,255,0.15);
         position: relative;
-        transition: padding 0.3s ease; /* Smooth hover padding */
+        transition: padding 0.3s ease;
+        /* Smooth hover padding */
     }
 
     .header-row {
@@ -146,7 +146,8 @@ const tourDates = [
         opacity: 0.5;
         letter-spacing: 0.1em;
         padding-bottom: 15px;
-        border-bottom: 2px solid #fff; /* Línea más gruesa para el header */
+        border-bottom: 2px solid #fff;
+        /* Línea más gruesa para el header */
     }
 
     .item-row {
@@ -154,7 +155,8 @@ const tourDates = [
         font-size: 2.5rem; /* Texto grande */
         text-transform: uppercase;
         cursor: pointer;
-        padding-left: 10px; /* Espacio para hover */
+        padding-left: 10px;
+        /* Espacio para hover */
         padding-right: 10px;
     }
     
@@ -163,8 +165,10 @@ const tourDates = [
     }
 
     /* --- COLUMNS --- */
-    .col.date { font-family: var(--font-mono, monospace); font-size: 1rem; letter-spacing: 0.1em; }
-    .col.action { display: flex; justify-content: flex-end; }
+    .col.date { font-family: var(--font-mono, monospace); font-size: 1rem;
+        letter-spacing: 0.1em; }
+    .col.action { display: flex; justify-content: flex-end;
+    }
 
     /* --- BUTTON --- */
     .ticket-btn {
@@ -196,16 +200,23 @@ const tourDates = [
                 "venue venue"
                 "date date";
             gap: 5px;
-            padding: 25px 0;
+            /* CAMBIO AQUI: Padding lateral de 20px para centrar visualmente */
+            padding: 25px 20px; 
         }
 
-        .header-row { display: none; } /* Ocultamos header en móvil */
+        .header-row { display: none;
+        } /* Ocultamos header en móvil */
 
-        .col.city { grid-area: city; font-size: 2rem; }
-        .col.venue { grid-area: venue; font-size: 1.2rem; opacity: 0.7; font-family: var(--font-mono); }
-        .col.date { grid-area: date; font-size: 0.9rem; opacity: 0.5; margin-top: 10px; }
-        .col.action { grid-area: action; }
+        .col.city { grid-area: city; font-size: 2rem;
+        }
+        .col.venue { grid-area: venue; font-size: 1.2rem; opacity: 0.7; font-family: var(--font-mono);
+        }
+        .col.date { grid-area: date; font-size: 0.9rem; opacity: 0.5; margin-top: 10px;
+        }
+        .col.action { grid-area: action;
+        }
         
-        .section-title { font-size: 14vw; }
+        .section-title { font-size: 14vw;
+        }
     }
 </style>

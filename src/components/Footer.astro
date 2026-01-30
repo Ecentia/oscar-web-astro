@@ -2,7 +2,6 @@
 ---
 <footer class="footer-section" id="footer">
     
-    <!-- FONDO FOTOGRÁFICO FIJO -->
     <div class="footer-bg-container">
         <div class="dark-overlay"></div>
         <img src="/assets/foto_crowd.jpg" alt="Crowd Atmosphere" class="footer-image" />
@@ -10,7 +9,6 @@
 
     <div class="footer-content">
         
-        <!-- 1. Marquee Top -->
         <div class="marquee-wrapper">
             <div class="marquee-track">
                 <span>FRECUENCIA GLOBAL</span> <span class="divider">///</span>
@@ -22,7 +20,6 @@
             </div>
         </div>
 
-        <!-- 2. Grid de Contacto -->
         <div class="info-container">
             <div class="info-block contact">
                 <span class="label">DI HOLA</span>
@@ -49,7 +46,6 @@
             </div>
         </div>
 
-        <!-- 3. Nombre Gigante -->
         <div class="brand-wrapper">
             <h1 class="giant-name">
                 <span class="char">O</span><span class="char">S</span><span class="char">C</span><span class="char">A</span><span class="char">R</span>
@@ -58,7 +54,6 @@
             </h1>
         </div>
 
-        <!-- Copyright -->
         <div class="legal-row">
             <span>© 2026 OSCAR HERRERA</span>
             <span>TODOS LOS DERECHOS RESERVADOS</span>
@@ -85,7 +80,6 @@
                 start: "top 75%", // Se activa un poco antes
             }
         });
-
         tl.from(".giant-name .char", {
             yPercent: 120,
             opacity: 0,
@@ -118,10 +112,15 @@
 
     // 3. Marquee Infinito
     if(marqueeTrack) {
+        // CAMBIO AQUI: Velocidad adaptativa
+        // Si la pantalla es menor de 768px, usamos 8s (rápido), si no 20s (normal)
+        const isMobile = window.innerWidth < 768;
+        const speed = isMobile ? 8 : 20;
+
         gsap.to(marqueeTrack, {
             xPercent: -50,
             repeat: -1,
-            duration: 20,
+            duration: speed, // Usamos la variable calculada
             ease: "linear"
         });
     }
@@ -161,7 +160,8 @@
     }
 
     .dark-overlay {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%;
         background: linear-gradient(to bottom, #050505 0%, rgba(5,5,5,0.6) 50%, rgba(5,5,5,0.9) 100%);
         z-index: 1;
     }
@@ -180,7 +180,8 @@
 
     /* Marquee */
     .marquee-wrapper {
-        position: absolute; top: 0; left: 0; width: 100%;
+        position: absolute;
+        top: 0; left: 0; width: 100%;
         border-top: 1px solid rgba(255,255,255,0.1);
         border-bottom: 1px solid rgba(255,255,255,0.1);
         padding: 16px 0;
@@ -191,7 +192,8 @@
     }
 
     .marquee-track {
-        display: flex; white-space: nowrap; gap: 8vw;
+        display: flex;
+        white-space: nowrap; gap: 8vw;
         font-family: var(--font-mono, monospace);
         font-size: 1.1rem; font-weight: 700;
         letter-spacing: 0.2em; text-transform: uppercase;
@@ -199,11 +201,13 @@
         text-shadow: 0 0 10px rgba(255,255,255,0.3);
     }
     
-    .divider { color: #ccff00; font-weight: 900; margin: 0 20px; }
+    .divider { color: #ccff00; font-weight: 900;
+        margin: 0 20px; }
 
     /* Info */
     .info-container {
-        display: grid; grid-template-columns: 1.5fr 1fr auto;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr auto;
         gap: 40px; margin-top: 120px; align-items: flex-start;
     }
 
@@ -223,7 +227,8 @@
     }
     .big-link:hover { color: #ccc; }
 
-    .social-list { display: flex; flex-direction: column; gap: 10px; }
+    .social-list { display: flex; flex-direction: column; gap: 10px;
+    }
 
     .social-link {
         font-family: var(--font-display, sans-serif);
@@ -235,22 +240,28 @@
     }
     .social-link:hover { transform: translateX(10px); color: #ccff00; }
 
-    .arrow { font-size: 1rem; opacity: 0.8; }
+    .arrow { font-size: 1rem; opacity: 0.8;
+    }
 
     /* Scroll Button */
     .scroll-circle {
-        width: 100px; height: 100px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%; background: #fff;
         color: #000; border: none; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
-        transition: 0.3s; box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        transition: 0.3s;
+        box-shadow: 0 0 20px rgba(255,255,255,0.2);
     }
-    .scroll-circle:hover { transform: scale(1.15); background: #ccff00; }
-    .scroll-circle svg { width: 30px; height: 30px; }
+    .scroll-circle:hover { transform: scale(1.15); background: #ccff00;
+    }
+    .scroll-circle svg { width: 30px; height: 30px;
+    }
 
     /* Nombre Gigante */
     .brand-wrapper {
-        margin-top: auto; padding-top: 60px; overflow: hidden;
+        margin-top: auto;
+        padding-top: 60px; overflow: hidden;
     }
 
     .giant-name {
@@ -262,11 +273,13 @@
         text-shadow: 0 0 30px rgba(0,0,0,0.8);
     }
 
-    .char { display: inline-block; }
+    .char { display: inline-block;
+    }
 
     /* Legal */
     .legal-row {
-        display: flex; justify-content: space-between;
+        display: flex;
+        justify-content: space-between;
         border-top: 1px solid rgba(255,255,255,0.2);
         padding-top: 20px; margin-top: 20px;
         font-family: var(--font-mono, monospace);
@@ -274,9 +287,13 @@
     }
 
     @media (max-width: 900px) {
-        .info-container { grid-template-columns: 1fr; gap: 60px; }
-        .big-link { font-size: 10vw; }
-        .giant-name { font-size: 14vw; flex-wrap: wrap; justify-content: center; text-align: center; }
-        .scroll-circle { position: absolute; top: 80px; right: 20px; width: 60px; height: 60px; }
+        .info-container { grid-template-columns: 1fr;
+        gap: 60px; }
+        .big-link { font-size: 10vw;
+        }
+        .giant-name { font-size: 14vw; flex-wrap: wrap; justify-content: center; text-align: center;
+        }
+        .scroll-circle { position: absolute; top: 80px; right: 20px; width: 60px; height: 60px;
+        }
     }
 </style>
